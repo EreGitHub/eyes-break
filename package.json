@@ -1,6 +1,6 @@
 {
   "name": "eyes-break",
-  "version": "0.0.0",
+  "version": "0.0.0-RC1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,9 +10,9 @@
     "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,json}\"",
     "tauri": "tauri",
-    "tauri:dev": "bun run tauri dev",
-    "tauri:build": "bun run tauri build",
-    "tauri:bundle": "bun run tauri bundle"
+    "tauri:dev": "bun tauri dev",
+    "tauri:build": "bun tauri build",
+    "tauri:bundle": "bun tauri bundle"
   },
   "private": true,
   "dependencies": {

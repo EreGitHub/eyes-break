@@ -57,3 +57,21 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Tauri
+
+To run the app in development mode, use the following command:
+
+```bash
+bun tauri dev
+```
+
+To build the app for production, use the following command:
+
+```bash
+bun tauri build
+```
+
+#Docs
+
+https://tauri.app
