@@ -1,0 +1,17 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Environment files
+.env
+
+# IDE specific files
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# System files
+.DS_Store
+Thumbs.db

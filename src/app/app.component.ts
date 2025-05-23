@@ -1,12 +1,25 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { invoke } from '@tauri-apps/api/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  // styles: ['@import "./config/styles/index.scss";'],
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  title = 'eyes-break';
+  greetingMessage = '';
+
+  greet(event: SubmitEvent, name: string): void {
+    event.preventDefault();
+
+    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+    invoke<string>('greet', { name }).then(text => {
+      this.greetingMessage = text;
+    });
+  }
 }
