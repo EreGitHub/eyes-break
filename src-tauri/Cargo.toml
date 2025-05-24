@@ -24,3 +24,4 @@ log = "0.4"
 tauri = { version = "2.5.0", features = [] }
 tauri-plugin-log = "2.0.0-rc"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
+tauri-plugin-notification = "2"
