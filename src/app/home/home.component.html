@@ -50,9 +50,18 @@
     <button class="eb-home-start-button" (click)="startSession()">
       <div class="eb-home-start-inner">
         <div class="eb-home-start-icon">
-          <h2>
-            Comenzar<span class="eb-home-dots"><span>.</span><span>.</span><span>.</span></span>
-          </h2>
+          @if (!isSessionRunning()) {
+            <h2>
+              {{ title() }}
+              <span class="eb-home-dots">
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+              </span>
+            </h2>
+          } @else {
+            <h2>{{ title() }}</h2>
+          }
         </div>
       </div>
       <div class="eb-home-start-glow"></div>
