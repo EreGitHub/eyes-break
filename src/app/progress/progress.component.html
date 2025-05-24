@@ -1,0 +1,65 @@
+<div class="container">
+  <h1 class="title">Dark Progress</h1>
+  <p class="subtitle">Elegante & Llamativo</p>
+
+  <div class="progress-container">
+    <div class="particles" #particlesContainer></div>
+    <svg class="progress-ring" width="220" height="220">
+      <defs>
+        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color: #78dbff; stop-opacity: 1" />
+          <stop offset="30%" style="stop-color: #7877c6; stop-opacity: 1" />
+          <stop offset="70%" style="stop-color: #ff77c6; stop-opacity: 1" />
+          <stop offset="100%" style="stop-color: #78dbff; stop-opacity: 1" />
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <circle class="progress-ring__background" cx="110" cy="110" r="100"></circle>
+      <circle class="progress-ring__track" cx="110" cy="110" r="105"></circle>
+      <circle class="progress-ring__pulse" cx="110" cy="110" r="100" #progressPulse></circle>
+      <circle
+        class="progress-ring__progress"
+        cx="110"
+        cy="110"
+        r="100"
+        filter="url(#glow)"
+        #progressRing
+      ></circle>
+    </svg>
+    <div class="progress-text">
+      <span>{{ displayProgress }}</span
+      >%
+    </div>
+  </div>
+
+  <!-- <div class="progress-label">Estado del Progreso</div>
+  
+    <div class="input-group">
+      <label for="progress-input">Establecer Valor:</label>
+      <input
+        type="number"
+        id="progress-input"
+        min="0"
+        max="100"
+        [(ngModel)]="inputValue"
+        (input)="onInputChange($event)"
+        (keypress)="onKeyPress($event)"
+        placeholder="0-100"
+      />
+    </div> -->
+
+  <div class="controls">
+    <button class="btn" (click)="setProgress(25)">25%</button>
+    <button class="btn" (click)="setProgress(50)">50%</button>
+    <button class="btn" (click)="setProgress(75)">75%</button>
+    <button class="btn" (click)="setProgress(100)">100%</button>
+    <button class="btn" (click)="animateProgress()">Animar</button>
+    <button class="btn" (click)="resetProgress()">Reset</button>
+  </div>
+</div>
