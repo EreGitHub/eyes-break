@@ -1,25 +1,23 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { invoke } from '@tauri-apps/api/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  imports: [RouterOutlet],
+  template: `
+    <div class="eb-app">
+      <router-outlet></router-outlet>
+    </div>
+  `,
+  styles: [
+    `
+      .eb-app {
+        height: 100vh;
+      }
+    `,
+  ],
   // styles: ['@import "./config/styles/index.scss";'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {
-  greetingMessage = '';
-
-  greet(event: SubmitEvent, name: string): void {
-    event.preventDefault();
-
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    invoke<string>('greet', { name }).then(text => {
-      this.greetingMessage = text;
-    });
-  }
-}
+export class AppComponent {}

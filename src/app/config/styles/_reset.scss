@@ -2,30 +2,23 @@
 
 /* Aquí definimos las Custom properties */
 :root {
-  //TODO: solucinar las variables
-  // --negro: #393939;
-  --color-primario: #181818;
-  --color-secundario: #f0f0f0;
-
-  --primary-color: #9400d3;
-  --secondary-color: #faa6ff;
-  --tertiary-color: #7353ba;
-
-  /* Tipografía */
-  // --primary-font: Helvetica, Arial, sans-serif;
-  // --secondary-font: Verdana;
-
-  // --font-poppins: 'Poppins', sans-serif;
-  // --font-roboto: 'Roboto', sans-serif;
-
-  --primary: #c0f497;
-  --scondary: #e0faca;
-
-  --font-green: #62a82b;
-  --font-dark-green: #3d7313;
-  --font-black: #1e1e1e;
-  --font-grey: #ababab;
-  --font-dark-grey: #707070;
+  --window-bg: #1e1e1e;
+  --sidebar-bg: #252526;
+  --sidebar-hover: #2d2d2d;
+  --sidebar-active: #37373d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border-color: #404040;
+  --primary: #0e639c;
+  --primary-hover: #1177bb;
+  --titlebar-bg: #2d2d2d;
+  --titlebar-border: #1a1a1a;
+  --card-bg: #2d2d2d;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --scrollbar-track: #252526;
+  --scrollbar-thumb: #454545;
+  --scrollbar-thumb-hover: #555555;
 }
 
 /* Las adaptamos al modo oscuro */
@@ -138,12 +131,12 @@ q:after {
 
 /* Configuramos el texto que seleccionamos */
 ::-moz-selection {
-  background-color: var(--color-primario);
-  color: var(--color-secundario);
+  background-color: var(--window-bg);
+  color: var(--text-primary);
 }
 ::selection {
-  background-color: var(--color-primario);
-  color: var(--color-secundario);
+  background-color: var(--window-bg);
+  color: var(--text-primary);
 }
 
 /* Nivelamos problemas de tipografías y colocación de formularios */
@@ -196,7 +189,9 @@ body {
   min-height: 100vh;
   font-size: 100%;
   font-family: Arial, sans-serif;
-  color: var(--color-secundario);
+  color: var(--text-primary);
+  background-color: #0f0f0f;
+  color: white;
   /* opcional */
   line-height: 1.4em;
   /* opcional si nos da problemas lo quitamoss, evita desvordamiento*/
