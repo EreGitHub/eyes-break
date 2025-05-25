@@ -15,7 +15,7 @@
     </div>
 
     <div class="eb-home-stat-content">
-      <label class="eb-home-stat-time">25:00</label>
+      <label class="eb-home-stat-time">{{ timerWork() }}</label>
       <label class="eb-home-stat-label">Tiempo de trabajo</label>
     </div>
   </div>
@@ -36,22 +36,33 @@
     </div>
 
     <div class="eb-home-stat-content">
-      <label class="eb-home-stat-time">05:00</label>
+      <label class="eb-home-stat-time">{{ timerBreak() }}</label>
       <label class="eb-home-stat-label">Tiempo de descanso</label>
     </div>
   </div>
 
   <div class="eb-home-status">
     <div class="eb-home-status-indicator"></div>
-    <label class="eb-home-status-text">En espera para iniciar</label>
+    <label class="eb-home-status-text">
+      {{ currentMessage() }}
+    </label>
   </div>
 
   <div class="eb-home-start-section">
-    <button class="eb-home-start-button" (click)="startSession()">
+    <button class="eb-home-start-button" (click)="toogleSession()">
+      <svg width="0" height="0">
+        <defs>
+          <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3b82f6" />
+            <stop offset="50%" stop-color="#8b5cf6" />
+            <stop offset="100%" stop-color="#ec4899" />
+          </linearGradient>
+        </defs>
+      </svg>
       <div class="eb-home-start-inner">
         <div class="eb-home-start-icon">
-          @if (!isSessionRunning()) {
-            <h2>
+          @if (stateSession() === STATE_SESSION.WAITING) {
+            <h2 class="eb-home-start-title--not-running">
               {{ title() }}
               <span class="eb-home-dots">
                 <span>.</span>
@@ -60,9 +71,23 @@
               </span>
             </h2>
           } @else {
-            <h2>{{ title() }}</h2>
+            <section class="eb-home-running-section">
+              <h2 class="eb-home-start-title--running">{{ title() }}</h2>
+
+              <span class="eb-home-progress-text">{{ progress() }}%</span>
+            </section>
           }
         </div>
+        <svg class="eb-home-progress" viewBox="0 0 100 100">
+          <circle class="eb-home-progress-bg" cx="50" cy="50" r="45" />
+          <circle
+            class="eb-home-progress-fill"
+            cx="50"
+            cy="50"
+            r="45"
+            [style.stroke-dashoffset]="283 - (283 * progress()) / 100"
+          />
+        </svg>
       </div>
       <div class="eb-home-start-glow"></div>
     </button>

@@ -70,6 +70,77 @@
   inset: 0.25rem;
   justify-content: center;
   position: absolute;
+  overflow: hidden;
+}
+
+.eb-home-progress {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.eb-home-progress-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 0;
+}
+
+.eb-home-progress-fill {
+  fill: none;
+  stroke: url(#progress-gradient);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.eb-home-start-button {
+  position: relative;
+  background: linear-gradient(to bottom right, #3b82f6, #8b5cf6, #ec4899);
+  border-radius: 9999px;
+  border: none;
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+  cursor: pointer;
+  height: 13.5rem;
+  width: 13.5rem;
+
+  /* Add gradient for the progress */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    padding: 0.25rem;
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 0.5;
+  }
+}
+
+.eb-home-running-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .eb-home-start-icon {
@@ -80,6 +151,40 @@
     color: #e8eaed;
     font-size: 1.5rem;
     font-weight: 600;
+  }
+
+  .eb-home-start-title--running {
+    color: #e8eaed;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .eb-home-start-title--not-running {
+    color: #e8eaed;
+  }
+}
+
+.eb-home-progress-text {
+  animation: eb-textPulse 2s ease-in-out infinite alternate;
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-shadow:
+    0 0 20px rgba(120, 219, 255, 0.8),
+    0 0 40px rgba(120, 219, 255, 0.4);
+}
+
+@keyframes eb-textPulse {
+  0% {
+    text-shadow:
+      0 0 20px rgba(120, 219, 255, 0.8),
+      0 0 40px rgba(120, 219, 255, 0.4);
+  }
+  100% {
+    text-shadow:
+      0 0 30px rgba(120, 219, 255, 1),
+      0 0 60px rgba(120, 219, 255, 0.6),
+      0 0 80px rgba(120, 219, 255, 0.3);
   }
 }
 
