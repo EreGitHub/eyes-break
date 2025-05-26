@@ -1,0 +1,9 @@
+https://tauri.app
+https://github.com/tauri-apps/awesome-tauri?tab=readme-ov-file
+
+https://dev.to/rain9/tauri5-tray-icon-implementation-and-event-handling-5d1e
+https://github.com/4gray/tauri-menubar-app
+
+https://www.youtube.com/watch?v=I36g_UZi44U&list=PL6K94_Yb98WwE46qewjbk2WgmsLTnHnmd
+https://github.com/jbolda/tauri-playground/blob/main/tray-app/src-tauri/src/main.rs
+
