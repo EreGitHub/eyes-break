@@ -9,8 +9,12 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { app } from '@tauri-apps/api';
+import { defaultWindowIcon } from '@tauri-apps/api/app';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { Menu } from '@tauri-apps/api/menu';
+import { TrayIcon, TrayIconOptions } from '@tauri-apps/api/tray';
 import {
   isPermissionGranted,
   requestPermission,
@@ -18,6 +22,7 @@ import {
 } from '@tauri-apps/plugin-notification';
 import { concatMap, delay, from, of } from 'rxjs';
 import { StateSessionEnum } from '../models/state-session.model';
+// import { getCurrentWindow } from '@tauri-apps/api/window';
 
 @Component({
   selector: 'eb-home',
@@ -28,13 +33,13 @@ import { StateSessionEnum } from '../models/state-session.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomeComponent implements OnInit {
-  public stateSession: WritableSignal<StateSessionEnum>;
   public currentMessage: WritableSignal<string>;
   public permissionGrantedNotification: WritableSignal<boolean>;
   public progress: WritableSignal<number>;
-  public title: WritableSignal<string>;
-  public timerWork: WritableSignal<string>;
+  public stateSession: WritableSignal<StateSessionEnum>;
   public timerBreak: WritableSignal<string>;
+  public timerWork: WritableSignal<string>;
+  public title: WritableSignal<string>;
 
   public readonly _EMPTY: string = '';
   public readonly START_TITLE: string = 'Comenzar';
@@ -54,6 +59,43 @@ export default class HomeComponent implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
+    const menu: Menu = await Menu.new({
+      items: [
+        {
+          id: 'quit',
+          text: 'Quit',
+          action: () => {
+            // getCurrentWindow().close();
+            invoke('exit_app');
+          },
+        },
+        {
+          id: 'hide',
+          text: 'Hide',
+          action: () => {
+            app.hide();
+          },
+        },
+        {
+          id: 'show',
+          text: 'Show',
+          action: () => {
+            app.show();
+          },
+        },
+      ],
+    });
+
+    const options: TrayIconOptions = {
+      menu,
+      icon: (await defaultWindowIcon()) || '',
+      menuOnLeftClick: true,
+      tooltip: 'Eyes Break',
+    };
+
+    const tray = await TrayIcon.new(options);
+    tray.setMenu(menu);
+
     this._startMessageRotation(this.stateSession());
     this.timerWork.set(this._getTimeSession(StateSessionEnum.WORK));
     this.timerBreak.set(this._getTimeSession(StateSessionEnum.BREAK));
@@ -96,12 +138,14 @@ export default class HomeComponent implements OnInit {
         const timerWork = this._getTimeSession(this.stateSession());
 
         invoke('start_session', { durationStr: timerWork });
+        app.hide();
       }
 
       if (this.stateSession() === StateSessionEnum.BREAK) {
         this._notify('Descanso', 'Es hora de descansar');
 
         this.timerWork.set(this._getTimeSession(StateSessionEnum.WORK));
+        app.show();
       } else if (this.stateSession() === StateSessionEnum.WORK) {
         this.timerBreak.set(this._getTimeSession(StateSessionEnum.BREAK));
       }
@@ -114,6 +158,7 @@ export default class HomeComponent implements OnInit {
     const timerWork = this._getTimeSession(this.stateSession());
     invoke('start_session', { durationStr: timerWork });
     this._startMessageRotation(this.stateSession());
+    app.hide();
   }
 
   private _cancel(): void {
@@ -167,8 +212,8 @@ export default class HomeComponent implements OnInit {
   private _getTimeSession(estate: StateSessionEnum): string {
     const times: Record<StateSessionEnum, string> = {
       [StateSessionEnum.WAITING]: '00:00:00',
-      [StateSessionEnum.WORK]: '00:06:00',
-      [StateSessionEnum.BREAK]: '00:03:00',
+      [StateSessionEnum.WORK]: '00:20:00',
+      [StateSessionEnum.BREAK]: '00:20:00',
     };
 
     return times[estate];

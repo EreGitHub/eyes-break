@@ -10,13 +10,20 @@
     "beforeBuildCommand": "bun run build"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "Eyes Break",
         "width": 700,
         "height": 500,
         "resizable": false,
-        "fullscreen": false
+        "fullscreen": false,
+        "decorations": false,
+        "focus": false,
+        "transparent": true,
+        "skipTaskbar": true,
+        "alwaysOnTop": true,
+        "hiddenTitle": true
       }
     ],
     "security": {

@@ -3,5 +3,15 @@
   "identifier": "default",
   "description": "enables the default permissions",
   "windows": ["main"],
-  "permissions": ["core:default", "notification:default"]
+  "permissions": [
+    "core:default",
+    "notification:default",
+    "core:tray:default",
+    "core:window:default",
+    "core:menu:default",
+    "core:app:allow-default-window-icon",
+    "core:app:allow-app-hide",
+    "core:app:allow-app-show",
+    "core:window:allow-close"
+  ]
 }
