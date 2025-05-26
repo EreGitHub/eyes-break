@@ -1,6 +1,22 @@
 <div align="center">
-  <h1>👁️ EyesBreak</h1>
-  <h3>Tu compañero para el cuidado visual</h3>
+
+<div align="center" style="padding: 2rem 0;">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-bottom: 1rem;">
+    <img 
+      src="./public/icon.png" 
+      alt="EyesBreak Logo" 
+      width="120" 
+      style="border-radius: 20%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.3s ease;"
+      onmouseover="this.style.transform='scale(1.05)'"
+      onmouseout="this.style.transform='scale(1)'"
+    />
+    <div style="text-align: left;">
+      <h1 style="margin: 0; font-size: 2.8em; color: #2c3e50; letter-spacing: -0.5px;">EyesBreak</h1>
+      <p style="margin: 0.5rem 0 0; font-size: 1.2em; color: #7f8c8d; font-weight: 500;">
+        Tu compañero para el cuidado visual
+      </p>
+    </div>
+  </div>
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![Angular](https://img.shields.io/badge/Angular-19.0.1-DD0031?logo=angular)](https://angular.io/)
