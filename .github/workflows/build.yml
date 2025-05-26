@@ -3,7 +3,7 @@ name: Build and Release Eyes-break App
 on:
   push:
     tags:
-      - 'v*.*.*' # Ejemplo: v1.0.0
+      - 'v0.0.0-RC1' # Ejemplo: v1.0.0
 
 jobs:
   build:
