@@ -213,7 +213,7 @@ export default class HomeComponent implements OnInit {
     const times: Record<StateSessionEnum, string> = {
       [StateSessionEnum.WAITING]: '00:00:00',
       [StateSessionEnum.WORK]: '00:20:00',
-      [StateSessionEnum.BREAK]: '00:20:00',
+      [StateSessionEnum.BREAK]: '00:00:20',
     };
 
     return times[estate];
