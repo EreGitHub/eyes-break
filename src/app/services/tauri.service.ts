@@ -79,14 +79,14 @@ export class TauriService {
           id: 'hide',
           text: 'Hide',
           action: () => {
-            app.hide();
+            this.hideApp();
           },
         },
         {
           id: 'show',
           text: 'Show',
           action: () => {
-            app.show();
+            this.showApp();
           },
         },
       ],
