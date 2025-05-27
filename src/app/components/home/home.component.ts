@@ -11,11 +11,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { concatMap, delay, from, of, Subject, takeUntil, timer } from 'rxjs';
-import { SessionEventPayloadEnum, StateSessionEnum } from '../models/state-session.model';
-import { NotificationService } from '../services/notification.service';
-import { TauriService } from '../services/tauri.service';
-import { TimerService } from '../services/timer.service';
-import { SESSION_CONFIG } from '../tokens/session-config.token';
+import { SessionEventPayloadEnum, StateSessionEnum } from '../../models/state-session.model';
+import { AudioManagerService } from '../../services/audio-manager.service';
+import { NotificationService } from '../../services/notification.service';
+import { TauriService } from '../../services/tauri.service';
+import { TimerService } from '../../services/timer.service';
+import { SESSION_CONFIG } from '../../tokens/session-config.token';
 // import { getCurrentWindow } from '@tauri-apps/api/window';
 
 @Component({
@@ -51,6 +52,7 @@ export default class HomeComponent implements OnInit {
     [StateSessionEnum.BREAK]: 'Mira 6 metros durante 20 segundos',
   };
 
+  private readonly _audioManagerService = inject(AudioManagerService);
   private readonly _notificationService = inject(NotificationService);
   private readonly _sessionConfig = inject(SESSION_CONFIG);
   private readonly _tauriService = inject(TauriService);
@@ -69,6 +71,7 @@ export default class HomeComponent implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
+    console.log('ngOnInit..');
     await this._initializeApp();
   }
 
@@ -87,6 +90,7 @@ export default class HomeComponent implements OnInit {
       await this._tauriService.buildMenu();
       this._initializeTimersValuesView();
       this._startMessageRotation(this.stateSession());
+      this._audioManagerService.playWelcomeSound();
     } catch (error) {
       console.error('Error initializing app:', error);
     }
@@ -163,8 +167,10 @@ export default class HomeComponent implements OnInit {
       this._timerService.startSession(duration);
 
       if (this.stateSession() === StateSessionEnum.BREAK) {
+        this._audioManagerService.playBreakSound();
         await this._handleBreakSession();
       } else {
+        this._audioManagerService.playWorkSound();
         await this._handleWorkSession();
       }
     }

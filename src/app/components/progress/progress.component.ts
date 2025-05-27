@@ -6,6 +6,7 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -14,7 +15,7 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule],
   templateUrl: './progress.component.html',
   styleUrl: './progress.component.scss',
-  // encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgressComponent implements OnInit, AfterViewInit {

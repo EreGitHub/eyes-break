@@ -34,13 +34,13 @@ import { fromEvent } from 'rxjs';
 export class AppComponent implements OnInit {
   private readonly _CONTEXT_MENU_EVENT = 'contextmenu';
 
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly _destroyRef = inject(DestroyRef);
   private readonly _document = inject(DOCUMENT);
 
   public ngOnInit(): void {
     if (!isDevMode()) {
       fromEvent<MouseEvent>(this._document, this._CONTEXT_MENU_EVENT)
-        .pipe(takeUntilDestroyed(this.destroyRef))
+        .pipe(takeUntilDestroyed(this._destroyRef))
         .subscribe(event => {
           event.preventDefault();
         });

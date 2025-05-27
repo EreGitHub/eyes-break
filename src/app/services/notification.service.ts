@@ -5,9 +5,7 @@ import {
   sendNotification,
 } from '@tauri-apps/plugin-notification';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class NotificationService {
   private permissionGranted = false;
 

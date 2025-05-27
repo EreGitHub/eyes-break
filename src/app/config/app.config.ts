@@ -1,8 +1,9 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
-import { routes } from './app.routes';
-import { provideSessionConfig } from './tokens/session-config.token';
+import { routes } from '../app.routes';
+import { provideServices } from '../services/provider-services';
+import { provideSessionConfig } from '../tokens/session-config.token';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -10,5 +11,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withViewTransitions(), withComponentInputBinding()),
     provideSessionConfig(),
+    provideServices(),
   ],
 };
