@@ -8,9 +8,7 @@ import { TrayIcon, TrayIconOptions } from '@tauri-apps/api/tray';
 import { SessionDispatchEnum } from '../models/state-session.model';
 // import { getCurrentWindow } from '@tauri-apps/api/window';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class TauriService {
   private _listeners: UnlistenFn[];
 

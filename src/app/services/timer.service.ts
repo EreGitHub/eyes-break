@@ -1,24 +1,8 @@
-// models/session-config.interface.ts
-export interface SessionTimes {
-  readonly work: string;
-  readonly break: string;
-  readonly waiting: string;
-}
-
-export interface SessionMessages {
-  readonly waiting: string;
-  readonly work: string;
-  readonly break: string;
-}
-
-// services/timer.service.ts
 import { inject, Injectable } from '@angular/core';
 import { SessionDispatchEnum } from '../models/state-session.model';
 import { TauriService } from './tauri.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class TimerService {
   private readonly _tauriService = inject(TauriService);
 
