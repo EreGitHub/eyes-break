@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,7 +10,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { concatMap, delay, from, of } from 'rxjs';
+import { concatMap, delay, from, of, Subject, takeUntil, timer } from 'rxjs';
 import { SessionEventPayloadEnum, StateSessionEnum } from '../models/state-session.model';
 import { NotificationService } from '../services/notification.service';
 import { TauriService } from '../services/tauri.service';
@@ -19,13 +20,14 @@ import { SESSION_CONFIG } from '../tokens/session-config.token';
 
 @Component({
   selector: 'eb-home',
-  imports: [],
+  imports: [NgClass],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomeComponent implements OnInit {
+  public animatedAfterStarted: WritableSignal<boolean>;
   public currentMessage: WritableSignal<string>;
   public progress: WritableSignal<number>;
   public stateSession: WritableSignal<StateSessionEnum>;
@@ -37,7 +39,10 @@ export default class HomeComponent implements OnInit {
   public readonly STATE_SESSION: typeof StateSessionEnum = StateSessionEnum;
   public readonly STOP_TITLE: string = 'Detener';
 
+  private readonly _ANIMATED_AFTER_STARTED_DELAY: number = 4500;
   private readonly _EMPTY: string = '';
+
+  private _cancelTimer$: Subject<void>;
 
   //TODO: internalize messages
   private readonly sessionMessages: Record<StateSessionEnum, string> = {
@@ -55,9 +60,11 @@ export default class HomeComponent implements OnInit {
   constructor() {
     this.stateSession = signal(StateSessionEnum.WAITING);
     this.currentMessage = signal(this._EMPTY);
+    this.animatedAfterStarted = signal(false);
     this.title = signal(this.START_TITLE);
     this.timerBreak = signal(this._EMPTY);
     this.timerWork = signal(this._EMPTY);
+    this._cancelTimer$ = new Subject<void>();
     this.progress = signal(0);
   }
 
@@ -120,7 +127,21 @@ export default class HomeComponent implements OnInit {
     const duration: string = this._getSessionDuration(this.stateSession());
 
     this._timerService.startSession(duration);
-    this._tauriService.hideApp();
+    this._startAnimated();
+  }
+
+  private _startAnimated(): void {
+    this.animatedAfterStarted.set(true);
+
+    this._cancelTimer$.next();
+
+    timer(this._ANIMATED_AFTER_STARTED_DELAY)
+      .pipe(takeUntil(this._cancelTimer$), takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => {
+        this.animatedAfterStarted.set(false);
+
+        this._tauriService.hideApp();
+      });
   }
 
   private _updateTimerDisplay(timeLeft: string): void {
@@ -160,7 +181,8 @@ export default class HomeComponent implements OnInit {
 
   private async _handleWorkSession(): Promise<void> {
     this.timerBreak.set(this._getSessionDuration(StateSessionEnum.BREAK));
-    await this._tauriService.hideApp();
+
+    this._startAnimated();
   }
 
   private _getNextSessionState(): StateSessionEnum {

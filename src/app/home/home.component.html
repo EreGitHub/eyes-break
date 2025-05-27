@@ -1,5 +1,8 @@
 <article class="eb-home">
-  <div class="eb-home-stat eb-home-work">
+  <div
+    class="eb-home-stat eb-home-work"
+    [ngClass]="{ 'eb-home-change-border': stateSession() === STATE_SESSION.WORK }"
+  >
     <div class="eb-home-stat-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +23,10 @@
     </div>
   </div>
 
-  <div class="eb-home-stat eb-home-break">
+  <div
+    class="eb-home-stat eb-home-break"
+    [ngClass]="{ 'eb-home-change-border': stateSession() === STATE_SESSION.BREAK }"
+  >
     <div class="eb-home-stat-icon">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +55,11 @@
   </div>
 
   <div class="eb-home-start-section">
-    <button class="eb-home-start-button" (click)="toogleSession()">
+    <button
+      class="eb-home-start-button"
+      [ngClass]="{ 'eb-home-start-button-animated': animatedAfterStarted() }"
+      (click)="toogleSession()"
+    >
       <svg width="0" height="0">
         <defs>
           <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -60,7 +70,10 @@
         </defs>
       </svg>
       <div class="eb-home-start-inner">
-        <div class="eb-home-start-icon">
+        <div
+          class="eb-home-start-icon"
+          [ngClass]="{ 'eb-home-start-icon-animated': animatedAfterStarted() }"
+        >
           @if (stateSession() === STATE_SESSION.WAITING) {
             <h2 class="eb-home-start-title--not-running">
               {{ title() }}
@@ -89,7 +102,10 @@
           />
         </svg>
       </div>
-      <div class="eb-home-start-glow"></div>
+      <div
+        class="eb-home-start-glow"
+        [ngClass]="{ 'eb-home-start-glow-animated': animatedAfterStarted() }"
+      ></div>
     </button>
   </div>
 

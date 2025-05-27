@@ -44,9 +44,9 @@
 
 .eb-home-start-button {
   background: linear-gradient(
-    to bottom right, 
-    var(--button-gradient-1), 
-    var(--button-gradient-2), 
+    to bottom right,
+    var(--button-gradient-1),
+    var(--button-gradient-2),
     var(--button-gradient-3)
   );
   border-radius: 9999px;
@@ -84,9 +84,9 @@
     border-radius: 50%;
     padding: 0.25rem;
     background: linear-gradient(
-      45deg, 
-      var(--button-gradient-1), 
-      var(--button-gradient-2), 
+      45deg,
+      var(--button-gradient-1),
+      var(--button-gradient-2),
       var(--button-gradient-3)
     );
     -webkit-mask:
@@ -100,6 +100,32 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
+  }
+}
+
+.eb-home-start-button-animated {
+  animation: eb-home-start-button-animated-Pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes eb-home-start-button-animated-Pulse {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+.eb-home-start-icon-animated {
+  animation: eb-home-start-icon-animated-Pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes eb-home-start-icon-animated-Pulse {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1);
   }
 }
 
@@ -229,9 +255,9 @@
 
 .eb-home-start-glow {
   background: linear-gradient(
-    to bottom right, 
-    var(--button-gradient-1), 
-    var(--button-gradient-2), 
+    to bottom right,
+    var(--button-gradient-1),
+    var(--button-gradient-2),
     var(--button-gradient-3)
   );
   border-radius: 9999px;
@@ -244,6 +270,19 @@
 
 .eb-home-start-button:hover .eb-home-start-glow {
   opacity: 0.2;
+}
+
+.eb-home-start-glow-animated {
+  animation: eb-home-start-glow-Pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes eb-home-start-glow-Pulse {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.2;
+  }
 }
 
 .eb-home-stat {
@@ -259,6 +298,10 @@
   padding: 0.8rem;
   transition: background-color 0.2s;
   width: 9.9rem;
+}
+
+.eb-home-change-border {
+  border: 1px solid #00c853;
 }
 
 .eb-home-work {
