@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  -ms-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-drag: none;
+  user-select: none;
+}
+
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  -webkit-user-drag: auto;
+}

@@ -7,10 +7,10 @@ import {
 import { SessionConfig } from '../models/session-conf.model';
 
 export const defaultSessionConfig: SessionConfig = {
-  breakDuration: '00:20:00',
+  breakDuration: '00:00:20',
   isActiveNotification: true,
   messageAnimationDelay: 70,
-  workDuration: '00:00:20',
+  workDuration: '00:20:00',
 };
 
 export const SESSION_CONFIG = new InjectionToken<SessionConfig>('SESSION_CONFIG');

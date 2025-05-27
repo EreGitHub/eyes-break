@@ -69,8 +69,7 @@ export default class HomeComponent implements OnInit {
     if (this.stateSession() !== StateSessionEnum.WAITING) {
       this._timerService.cancelSession();
     } else {
-      const duration = this.getSessionDuration(StateSessionEnum.WORK);
-      this._timerService.startSession(duration);
+      this._startSession();
     }
   }
 
@@ -110,19 +109,16 @@ export default class HomeComponent implements OnInit {
     this._tauriService.listen(SessionEventPayloadEnum.SESSION_CANCELLED, () => {
       this.resetSessionState();
     });
-
-    this._tauriService.listen(SessionEventPayloadEnum.SESSION_STARTED, (isStarted: boolean) => {
-      if (isStarted) {
-        this._startSession();
-      }
-    });
   }
 
   private _startSession(): void {
     this.stateSession.set(StateSessionEnum.WORK);
     this.title.set(this.STOP_TITLE);
-
     this._startMessageRotation(this.stateSession());
+
+    const duration: string = this.getSessionDuration(this.stateSession());
+    this._timerService.startSession(duration);
+
     this._tauriService.hideApp();
   }
 
@@ -135,26 +131,26 @@ export default class HomeComponent implements OnInit {
   }
 
   private async handleSessionCompleted(): Promise<void> {
-    const nextState = this.getNextSessionState();
+    const nextState: StateSessionEnum = this.getNextSessionState();
     this.stateSession.set(nextState);
 
-    if (nextState !== StateSessionEnum.WAITING) {
-      const duration = this.getSessionDuration(nextState);
+    if (this.stateSession() !== StateSessionEnum.WAITING) {
+      const duration = this.getSessionDuration(this.stateSession());
       this._timerService.startSession(duration);
 
-      if (nextState === StateSessionEnum.BREAK) {
+      if (this.stateSession() === StateSessionEnum.BREAK) {
         await this.handleBreakSession();
       } else {
         await this.handleWorkSession();
       }
     }
 
-    this._startMessageRotation(nextState);
+    this._startMessageRotation(this.stateSession());
   }
 
   private async handleBreakSession(): Promise<void> {
     this.timerWork.set(this.getSessionDuration(StateSessionEnum.WORK));
-    await this._notificationService.notify('Descanso', '😃 Es hora de descansar');
+    await this._notificationService.notify('Descanso...', '😃 Es hora de descansar');
     await this._tauriService.showApp();
   }
 
@@ -173,7 +169,7 @@ export default class HomeComponent implements OnInit {
     this.stateSession.set(StateSessionEnum.WAITING);
     this.progress.set(0);
     this.title.set(this.START_TITLE);
-    this._startMessageRotation(StateSessionEnum.WAITING);
+    this._startMessageRotation(this.stateSession());
     this.timerWork.set(this.getSessionDuration(StateSessionEnum.WORK));
     this.timerBreak.set(this.getSessionDuration(StateSessionEnum.BREAK));
   }
