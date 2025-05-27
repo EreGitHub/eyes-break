@@ -71,7 +71,6 @@ export default class HomeComponent implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
-    console.log('ngOnInit..');
     await this._initializeApp();
   }
 
@@ -198,14 +197,16 @@ export default class HomeComponent implements OnInit {
   }
 
   private _resetSessionState(): void {
+    this._cancelTimer$.next();
+
     this.stateSession.set(StateSessionEnum.WAITING);
+    this.animatedAfterStarted.set(false);
     this.progress.set(0);
     this.title.set(this.START_TITLE);
-
-    this._startMessageRotation(this.stateSession());
-
     this.timerWork.set(this._getSessionDuration(StateSessionEnum.WORK));
     this.timerBreak.set(this._getSessionDuration(StateSessionEnum.BREAK));
+
+    this._startMessageRotation(this.stateSession());
   }
 
   private _startMessageRotation(state: StateSessionEnum): void {
