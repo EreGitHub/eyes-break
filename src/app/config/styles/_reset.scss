@@ -15,7 +15,7 @@
   --titlebar-bg: #2d2d2d;
   --titlebar-border: #1a1a1a;
   --card-bg: #2d2d2d;
-  
+
   /* New Color Variables */
   --status-indicator: #f59e0b;
   --status-bg: rgba(17, 17, 17, 0.5);
@@ -31,7 +31,7 @@
   --text-muted: #9ca3af;
   --footer-text: #6b7280;
   --footer-dot: #6b7280;
-  
+
   /* Effects */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
@@ -193,9 +193,6 @@ svg {
   display: block;
   fill: currentColor;
   width: 100%;
-}
-.test {
-  background-color: red;
 }
 
 /* (Probándolo, no usar en producción) En el caso de añadir una  */
