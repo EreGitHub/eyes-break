@@ -59,7 +59,7 @@ export class TauriService {
     await invoke(event, payload);
   }
 
-  public cleanup(): void {
+  public cleanupListeners(): void {
     this._listeners.forEach(unlisten => unlisten());
     this._listeners = [];
   }
@@ -79,14 +79,14 @@ export class TauriService {
           id: 'hide',
           text: 'Hide',
           action: () => {
-            app.hide();
+            this.hideApp();
           },
         },
         {
           id: 'show',
           text: 'Show',
           action: () => {
-            app.show();
+            this.showApp();
           },
         },
       ],
