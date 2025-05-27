@@ -9,19 +9,12 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { app } from '@tauri-apps/api';
-import { defaultWindowIcon } from '@tauri-apps/api/app';
-import { invoke } from '@tauri-apps/api/core';
-import { listen } from '@tauri-apps/api/event';
-import { Menu } from '@tauri-apps/api/menu';
-import { TrayIcon, TrayIconOptions } from '@tauri-apps/api/tray';
-import {
-  isPermissionGranted,
-  requestPermission,
-  sendNotification,
-} from '@tauri-apps/plugin-notification';
 import { concatMap, delay, from, of } from 'rxjs';
-import { StateSessionEnum } from '../models/state-session.model';
+import { SessionEventPayloadEnum, StateSessionEnum } from '../models/state-session.model';
+import { NotificationService } from '../services/notification.service';
+import { TauriService } from '../services/tauri.service';
+import { TimerService } from '../services/timer.service';
+import { SESSION_CONFIG } from '../tokens/session-config.token';
 // import { getCurrentWindow } from '@tauri-apps/api/window';
 
 @Component({
@@ -33,24 +26,34 @@ import { StateSessionEnum } from '../models/state-session.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomeComponent implements OnInit {
-  public currentMessage: WritableSignal<string>;
-  public permissionGrantedNotification: WritableSignal<boolean>;
-  public progress: WritableSignal<number>;
-  public stateSession: WritableSignal<StateSessionEnum>;
-  public timerBreak: WritableSignal<string>;
-  public timerWork: WritableSignal<string>;
-  public title: WritableSignal<string>;
+  public readonly currentMessage: WritableSignal<string>;
+  public readonly progress: WritableSignal<number>;
+  public readonly stateSession: WritableSignal<StateSessionEnum>;
+  public readonly timerBreak: WritableSignal<string>;
+  public readonly timerWork: WritableSignal<string>;
+  public readonly title: WritableSignal<string>;
 
-  public readonly _EMPTY: string = '';
   public readonly START_TITLE: string = 'Comenzar';
   public readonly STATE_SESSION: typeof StateSessionEnum = StateSessionEnum;
   public readonly STOP_TITLE: string = 'Detener';
 
+  private readonly _EMPTY: string = '';
+
+  //TODO: internalize messages
+  private readonly sessionMessages: Record<StateSessionEnum, string> = {
+    [StateSessionEnum.WAITING]: 'En espera para iniciar',
+    [StateSessionEnum.WORK]: 'Enfócate en tu trabajo...',
+    [StateSessionEnum.BREAK]: 'Mira 6 metros durante 20 segundos',
+  };
+
+  private readonly _notificationService = inject(NotificationService);
+  private readonly _sessionConfig = inject(SESSION_CONFIG);
+  private readonly _tauriService = inject(TauriService);
+  private readonly _timerService = inject(TimerService);
   private readonly _destroyRef = inject(DestroyRef);
 
   constructor() {
     this.stateSession = signal(StateSessionEnum.WAITING);
-    this.permissionGrantedNotification = signal(false);
     this.currentMessage = signal(this._EMPTY);
     this.title = signal(this.START_TITLE);
     this.timerBreak = signal(this._EMPTY);
@@ -59,163 +62,144 @@ export default class HomeComponent implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
-    const menu: Menu = await Menu.new({
-      items: [
-        {
-          id: 'quit',
-          text: 'Quit',
-          action: () => {
-            // getCurrentWindow().close();
-            invoke('exit_app');
-          },
-        },
-        {
-          id: 'hide',
-          text: 'Hide',
-          action: () => {
-            app.hide();
-          },
-        },
-        {
-          id: 'show',
-          text: 'Show',
-          action: () => {
-            app.show();
-          },
-        },
-      ],
-    });
-
-    const options: TrayIconOptions = {
-      menu,
-      icon: (await defaultWindowIcon()) || '',
-      menuOnLeftClick: true,
-      tooltip: 'Eyes Break',
-    };
-
-    const tray = await TrayIcon.new(options);
-    tray.setMenu(menu);
-
-    this._startMessageRotation(this.stateSession());
-    this.timerWork.set(this._getTimeSession(StateSessionEnum.WORK));
-    this.timerBreak.set(this._getTimeSession(StateSessionEnum.BREAK));
-    this.permissionGrantedNotification.set(await isPermissionGranted());
-
-    if (!this.permissionGrantedNotification()) {
-      await requestPermission();
-    }
+    await this._initializeApp();
   }
 
   public toogleSession(): void {
     if (this.stateSession() !== StateSessionEnum.WAITING) {
-      this._cancel();
-
-      return;
+      this._timerService.cancelSession();
+    } else {
+      const duration = this.getSessionDuration(StateSessionEnum.WORK);
+      this._timerService.startSession(duration);
     }
+  }
 
-    listen<number>('session-progress', event => {
-      this.progress.set(Number(event.payload.toFixed(0)));
-    });
-
-    listen<string>('session-time-left', event => {
-      const remaining: string = event.payload;
-
-      if (this.stateSession() === StateSessionEnum.WORK) {
-        this.timerWork.set(remaining);
-      } else {
-        this.timerBreak.set(remaining);
-      }
-    });
-
-    listen('session-completed', () => {
-      this.stateSession.set(
-        this.stateSession() === StateSessionEnum.WORK
-          ? StateSessionEnum.BREAK
-          : StateSessionEnum.WORK
-      );
-
-      if (this.stateSession() !== StateSessionEnum.WAITING) {
-        const timerWork = this._getTimeSession(this.stateSession());
-
-        invoke('start_session', { durationStr: timerWork });
-        app.hide();
-      }
-
-      if (this.stateSession() === StateSessionEnum.BREAK) {
-        this._notify('Descanso', 'Es hora de descansar');
-
-        this.timerWork.set(this._getTimeSession(StateSessionEnum.WORK));
-        app.show();
-      } else if (this.stateSession() === StateSessionEnum.WORK) {
-        this.timerBreak.set(this._getTimeSession(StateSessionEnum.BREAK));
-      }
-
+  private async _initializeApp(): Promise<void> {
+    try {
+      this.setupSessionListeners();
+      await this._notificationService.initialize();
+      await this._tauriService.buildMenu();
+      this.initializeTimersValuesView();
       this._startMessageRotation(this.stateSession());
+    } catch (error) {
+      console.error('Error initializing app:', error);
+    }
+  }
+
+  private initializeTimersValuesView(): void {
+    //TODO:read from config user settings
+    this.timerWork.set(this.getSessionDuration(StateSessionEnum.WORK));
+    this.timerBreak.set(this.getSessionDuration(StateSessionEnum.BREAK));
+  }
+
+  private setupSessionListeners(): void {
+    this._tauriService.cleanup();
+
+    this._tauriService.listen<number>(SessionEventPayloadEnum.SESSION_PROGRESS, progress => {
+      this.progress.set(Math.round(progress));
     });
 
+    this._tauriService.listen<string>(SessionEventPayloadEnum.SESSION_TIME_PROGRESS, timeLeft => {
+      this.updateTimerDisplay(timeLeft);
+    });
+
+    this._tauriService.listen(SessionEventPayloadEnum.SESSION_COMPLETED, async () => {
+      await this.handleSessionCompleted();
+    });
+
+    this._tauriService.listen(SessionEventPayloadEnum.SESSION_CANCELLED, () => {
+      this.resetSessionState();
+    });
+
+    this._tauriService.listen(SessionEventPayloadEnum.SESSION_STARTED, (isStarted: boolean) => {
+      if (isStarted) {
+        this._startSession();
+      }
+    });
+  }
+
+  private _startSession(): void {
     this.stateSession.set(StateSessionEnum.WORK);
     this.title.set(this.STOP_TITLE);
-    const timerWork = this._getTimeSession(this.stateSession());
-    invoke('start_session', { durationStr: timerWork });
+
     this._startMessageRotation(this.stateSession());
-    app.hide();
+    this._tauriService.hideApp();
   }
 
-  private _cancel(): void {
-    listen('session-cancelled', () => {
-      this.stateSession.set(StateSessionEnum.WAITING);
-      this.progress.set(0);
-      this.title.set(this.START_TITLE);
-      this._startMessageRotation(this.stateSession());
-      this.timerWork.set(this._getTimeSession(StateSessionEnum.WORK));
-      this.timerBreak.set(this._getTimeSession(StateSessionEnum.BREAK));
-    });
-
-    invoke('cancel_session');
+  private updateTimerDisplay(timeLeft: string): void {
+    if (this.stateSession() === StateSessionEnum.WORK) {
+      this.timerWork.set(timeLeft);
+    } else {
+      this.timerBreak.set(timeLeft);
+    }
   }
 
-  private async _notify(title: string, body: string): Promise<void> {
-    if (!this.permissionGrantedNotification()) {
-      const permission: NotificationPermission = await requestPermission();
+  private async handleSessionCompleted(): Promise<void> {
+    const nextState = this.getNextSessionState();
+    this.stateSession.set(nextState);
 
-      this.permissionGrantedNotification.set(permission === 'granted');
+    if (nextState !== StateSessionEnum.WAITING) {
+      const duration = this.getSessionDuration(nextState);
+      this._timerService.startSession(duration);
+
+      if (nextState === StateSessionEnum.BREAK) {
+        await this.handleBreakSession();
+      } else {
+        await this.handleWorkSession();
+      }
     }
 
-    if (this.permissionGrantedNotification()) {
-      sendNotification({ title, body });
-    }
+    this._startMessageRotation(nextState);
+  }
+
+  private async handleBreakSession(): Promise<void> {
+    this.timerWork.set(this.getSessionDuration(StateSessionEnum.WORK));
+    await this._notificationService.notify('Descanso', '😃 Es hora de descansar');
+    await this._tauriService.showApp();
+  }
+
+  private async handleWorkSession(): Promise<void> {
+    this.timerBreak.set(this.getSessionDuration(StateSessionEnum.BREAK));
+    await this._tauriService.hideApp();
+  }
+
+  private getNextSessionState(): StateSessionEnum {
+    return this.stateSession() === StateSessionEnum.WORK
+      ? StateSessionEnum.BREAK
+      : StateSessionEnum.WORK;
+  }
+
+  private resetSessionState(): void {
+    this.stateSession.set(StateSessionEnum.WAITING);
+    this.progress.set(0);
+    this.title.set(this.START_TITLE);
+    this._startMessageRotation(StateSessionEnum.WAITING);
+    this.timerWork.set(this.getSessionDuration(StateSessionEnum.WORK));
+    this.timerBreak.set(this.getSessionDuration(StateSessionEnum.BREAK));
   }
 
   private _startMessageRotation(state: StateSessionEnum): void {
-    const fullMessage = this._storeMessages(state);
+    const message = this.sessionMessages[state];
 
-    from(fullMessage.split(this._EMPTY))
+    from(message.split(''))
       .pipe(
-        concatMap((_, i) => of(fullMessage.slice(0, i + 1)).pipe(delay(70))),
+        concatMap((_, index) =>
+          of(message.slice(0, index + 1)).pipe(delay(this._sessionConfig.messageAnimationDelay))
+        ),
         takeUntilDestroyed(this._destroyRef)
       )
-      .subscribe(partial => {
-        this.currentMessage.set(partial);
+      .subscribe(partialMessage => {
+        this.currentMessage.set(partialMessage);
       });
   }
 
-  private _storeMessages(estate: StateSessionEnum): string {
-    const messages: Record<StateSessionEnum, string> = {
-      [StateSessionEnum.WAITING]: 'En espera para iniciar',
-      [StateSessionEnum.WORK]: 'Enfócate en tu trabajo...',
-      [StateSessionEnum.BREAK]: 'Mira 6 metros durante 20 segundos',
-    };
-
-    return messages[estate];
-  }
-
-  private _getTimeSession(estate: StateSessionEnum): string {
-    const times: Record<StateSessionEnum, string> = {
+  private getSessionDuration(state: StateSessionEnum): string {
+    const durations: Record<StateSessionEnum, string> = {
       [StateSessionEnum.WAITING]: '00:00:00',
-      [StateSessionEnum.WORK]: '00:20:00',
-      [StateSessionEnum.BREAK]: '00:00:20',
+      [StateSessionEnum.WORK]: this._sessionConfig.workDuration,
+      [StateSessionEnum.BREAK]: this._sessionConfig.breakDuration,
     };
 
-    return times[estate];
+    return durations[state];
   }
 }

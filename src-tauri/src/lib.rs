@@ -71,14 +71,18 @@ fn format_remaining_time(ms: u64) -> String {
 //     println!("Session completed");
 // }
 
-
 #[tauri::command]
 async fn start_session(window: Window, duration_str: String) {
     println!("Duration string: {}", duration_str);
     let Some(total_time_ms) = parse_duration_string(&duration_str) else {
-        let _ = window.emit("session-error", "Formato de tiempo inválido");
+        // let _ = window.emit("session-error", "Formato de tiempo inválido");
+        println!("Formato de tiempo inválido");
+        let _ = window.emit("session-started", false);    
+
         return;
     };
+
+    let _ = window.emit("session-started", true);
 
       // Reset cancel flag
     {
@@ -109,7 +113,7 @@ async fn start_session(window: Window, duration_str: String) {
         let time_left_str = format_remaining_time(remaining_ms);
 
         let _ = window.emit("session-progress", clamped_percentage);
-        let _ = window.emit("session-time-left", time_left_str.clone());        
+        let _ = window.emit("session-time-progress", time_left_str.clone());        
         
         print!("\r{:.0}% - ⏳ Tiempo restante: {}", clamped_percentage, time_left_str);
         io::stdout().flush().unwrap();
@@ -122,8 +126,6 @@ async fn start_session(window: Window, duration_str: String) {
     println!();
     println!("Session completed");
 }
-
-
 
 #[tauri::command]
 fn cancel_session() {
@@ -212,6 +214,14 @@ pub fn run() {
             // //   }
             // // })
             // .build(app);
+            
+            // let window = app.get_webview_window("main").unwrap();
+            // let is_dev: bool = tauri::is_dev();
+            // if is_dev {                
+            //     window.open_devtools();
+            // } else {                
+            //     window.close_devtools();
+            // }
 
             //hide app in dock macos
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
@@ -219,10 +229,10 @@ pub fn run() {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
+                        .level(log::LevelFilter::Info)                        
                         .build(),
                 )?;
-            }
+            }            
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![greet, start_session, list_files, cancel_session, exit_app])

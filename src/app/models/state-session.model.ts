@@ -1,7 +1,21 @@
 export enum StateSessionEnum {
-  WORK,
-  BREAK,
-  WAITING,
+  WORK = 'WORK',
+  BREAK = 'BREAK',
+  WAITING = 'WAITING',
+}
+
+export enum SessionEventPayloadEnum {
+  SESSION_CANCELLED = 'session-cancelled',
+  SESSION_COMPLETED = 'session-completed',
+  SESSION_PROGRESS = 'session-progress',
+  SESSION_STARTED = 'session-started',
+  SESSION_TIME_PROGRESS = 'session-time-progress',
+}
+
+export enum SessionDispatchEnum {
+  SESSION_STARTED = 'start_session',
+  SESSION_CANCELLED = 'cancel_session',
+  EXIT_APP = 'exit_app',
 }
 
 // animations: [
