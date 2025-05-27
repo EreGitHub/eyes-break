@@ -1,77 +1,124 @@
-# EyesBreak
+<div align="center">
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.1.
+  <img src="./public/icon.png" alt="Menubar app with Tauri" width="100" />
+  <h1>EyesBreak</h1>
 
-## Development server
+  <h3>Tu compañero para el cuidado visual</h3>
+  
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Angular](https://img.shields.io/badge/Angular-19.0.1-DD0031?logo=angular)](https://angular.io/)
+  [![Tauri](https://img.shields.io/badge/Tauri-2.0.0-FFC131?logo=tauri&logoColor=white)](https://tauri.app/)
+  [![Bun](https://img.shields.io/badge/Bun-1.2.0-FFC131?logo=bun&logoColor=white)](https://bun.sh/)
+  [![Rust](https://img.shields.io/badge/Rust-1.87.0-FFC131?logo=rust&logoColor=white)](https://www.rust-lang.org/)
+  [![Cargo](https://img.shields.io/badge/Cargo-1.87.0-FFC131?logo=cargo&logoColor=white)](https://www.rust-lang.org/)
 
-To start a local development server, run:
+  <p align="center">
+    <img src="./screenshot.png" alt="Menubar app with Tauri" width="500" />
+  </p>
+</div>
+
+---
+
+EyesBreak es una aplicación de escritorio diseñada para ayudar a los usuarios a mantener una rutina saludable de descanso visual. La aplicación te recuerda periódicamente que es hora de hacer una pausa para descansar la vista, ofreciendo ejercicios y recomendaciones para reducir la fatiga visual.
+
+## 🚀 Características
+
+- Recordatorios programados para pausas visuales
+- Ejercicios guiados para descansar la vista
+- Personalización de intervalos de trabajo y descanso
+- Interfaz intuitiva y fácil de usar
+- Disponible para Windows, macOS y Linux
+
+## 📦 Requisitos del Sistema
+
+- Node.js 19.0.1 o superior
+- Angular CLI 19.0.1
+- Rust 1.87.0 o superior
+- Cargo 1.87.0
+- Tauri (se instalará automáticamente)
+
+## 🛠️ Instalación para Desarrolladores
+
+### 1. Clonar el repositorio
 
 ```bash
-ng serve
+git clone https://github.com/tuusuario/eyes-break.git
+cd eyes-break
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 2. Instalar dependencias
 
 ```bash
-ng generate component component-name
+# Instalar dependencias de Node.js
+bun install
+
+# Instalar dependencias de Rust (si no las tienes)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Instalar dependencias del sistema para Tauri
+# Para macOS:
+brew install create-dmg
+# Para Ubuntu/Debian:
+# sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🚀 Iniciar la aplicación en modo desarrollo
 
 ```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-
-## Tauri
-
-To run the app in development mode, use the following command:
-
-```bash
+# Ejecutar el servidor de desarrollo de Angular
 bun tauri dev
 ```
 
-To build the app for production, use the following command:
+## 🏗️ Construir para producción
 
 ```bash
+# Construir el ejecutable con Tauri
 bun tauri build
 ```
 
-#Docs
+## 📚 Documentación para Desarrolladores
 
-https://tauri.app
+### Estructura del Proyecto
+
+```
+src/
+├── app/               # Módulos y componentes de Angular
+├── public/            # Recursos estáticos
+├── styles/            # Estilos globales
+└── tauri/             # Configuración de Tauri
+```
+
+### Convenciones de Código
+
+- Usar TypeScript con tipado estricto
+- Seguir la guía de estilo de Angular
+
+### Uso Básico
+
+1. Al iniciar, la aplicación se minimizará en la bandeja del sistema (barra de tareas)
+2. La aplicación te notificará cuando sea hora de tomar un descanso
+3. Sigue los ejercicios en pantalla durante el tiempo de descanso
+4. La aplicación se reanudará automáticamente después del descanso
+
+### Personalización
+
+Puedes personalizar la aplicación desde el menú de configuración:
+
+- Intervalo de trabajo (por defecto: 20 minutos)
+- Duración del descanso (por defecto: 20 segundos)
+- Activar/desactivar notificaciones
+- Iniciar con el sistema
+
+## 📄 Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## 📞 Soporte
+
+Si encuentras algún problema o tienes alguna pregunta, por favor [abre un issue](https://github.com/tuusuario/eyes-break/issues).
+
+## 🌐 Enlaces Útiles
+
+- [Documentación de Angular](https://angular.io/docs)
+- [Documentación de Tauri](https://tauri.app/)
+- [Guía de estilo de Angular](https://angular.io/guide/styleguide)

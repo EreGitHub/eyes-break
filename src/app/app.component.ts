@@ -1,5 +1,16 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  isDevMode,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
+import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -20,4 +31,19 @@ import { RouterOutlet } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  private readonly _CONTEXT_MENU_EVENT = 'contextmenu';
+
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly _document = inject(DOCUMENT);
+
+  public ngOnInit(): void {
+    if (!isDevMode()) {
+      fromEvent<MouseEvent>(this._document, this._CONTEXT_MENU_EVENT)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(event => {
+          event.preventDefault();
+        });
+    }
+  }
+}

@@ -1,0 +1,58 @@
+name: Build and Release Eyes-break App
+
+on:
+  push:
+    tags:
+      - 'v*' # Ejemplo: v1.0.0
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Set up Node.js (requerido por Angular CLI)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies with Bun
+        run: bun install
+
+      - name: Build Angular app
+        run: bun run build
+
+      - name: Install Linux dependencies (solo en Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev \
+            build-essential curl wget libssl-dev libgtk-3-dev \
+            libayatana-appindicator3-dev librsvg2-dev
+
+      - name: Build Tauri app
+        run: bunx tauri build
+
+      - name: Archive built bundle
+        id: archive
+        run: |
+          echo "bundle_path=$(find src-tauri/target/release/bundle -type f)" >> $GITHUB_OUTPUT
+
+      - name: Upload release artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.archive.outputs.bundle_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
