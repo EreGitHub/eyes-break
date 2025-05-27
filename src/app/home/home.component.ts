@@ -26,12 +26,12 @@ import { SESSION_CONFIG } from '../tokens/session-config.token';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class HomeComponent implements OnInit {
-  public readonly currentMessage: WritableSignal<string>;
-  public readonly progress: WritableSignal<number>;
-  public readonly stateSession: WritableSignal<StateSessionEnum>;
-  public readonly timerBreak: WritableSignal<string>;
-  public readonly timerWork: WritableSignal<string>;
-  public readonly title: WritableSignal<string>;
+  public currentMessage: WritableSignal<string>;
+  public progress: WritableSignal<number>;
+  public stateSession: WritableSignal<StateSessionEnum>;
+  public timerBreak: WritableSignal<string>;
+  public timerWork: WritableSignal<string>;
+  public title: WritableSignal<string>;
 
   public readonly START_TITLE: string = 'Comenzar';
   public readonly STATE_SESSION: typeof StateSessionEnum = StateSessionEnum;
@@ -75,54 +75,55 @@ export default class HomeComponent implements OnInit {
 
   private async _initializeApp(): Promise<void> {
     try {
-      this.setupSessionListeners();
+      this._setupSessionListeners();
       await this._notificationService.initialize();
       await this._tauriService.buildMenu();
-      this.initializeTimersValuesView();
+      this._initializeTimersValuesView();
       this._startMessageRotation(this.stateSession());
     } catch (error) {
       console.error('Error initializing app:', error);
     }
   }
 
-  private initializeTimersValuesView(): void {
+  private _initializeTimersValuesView(): void {
     //TODO:read from config user settings
-    this.timerWork.set(this.getSessionDuration(StateSessionEnum.WORK));
-    this.timerBreak.set(this.getSessionDuration(StateSessionEnum.BREAK));
+    this.timerWork.set(this._getSessionDuration(StateSessionEnum.WORK));
+    this.timerBreak.set(this._getSessionDuration(StateSessionEnum.BREAK));
   }
 
-  private setupSessionListeners(): void {
-    this._tauriService.cleanup();
+  private _setupSessionListeners(): void {
+    this._tauriService.cleanupListeners();
 
     this._tauriService.listen<number>(SessionEventPayloadEnum.SESSION_PROGRESS, progress => {
       this.progress.set(Math.round(progress));
     });
 
     this._tauriService.listen<string>(SessionEventPayloadEnum.SESSION_TIME_PROGRESS, timeLeft => {
-      this.updateTimerDisplay(timeLeft);
+      this._updateTimerDisplay(timeLeft);
     });
 
     this._tauriService.listen(SessionEventPayloadEnum.SESSION_COMPLETED, async () => {
-      await this.handleSessionCompleted();
+      await this._handleSessionCompleted();
     });
 
     this._tauriService.listen(SessionEventPayloadEnum.SESSION_CANCELLED, () => {
-      this.resetSessionState();
+      this._resetSessionState();
     });
   }
 
   private _startSession(): void {
     this.stateSession.set(StateSessionEnum.WORK);
     this.title.set(this.STOP_TITLE);
+
     this._startMessageRotation(this.stateSession());
 
-    const duration: string = this.getSessionDuration(this.stateSession());
-    this._timerService.startSession(duration);
+    const duration: string = this._getSessionDuration(this.stateSession());
 
+    this._timerService.startSession(duration);
     this._tauriService.hideApp();
   }
 
-  private updateTimerDisplay(timeLeft: string): void {
+  private _updateTimerDisplay(timeLeft: string): void {
     if (this.stateSession() === StateSessionEnum.WORK) {
       this.timerWork.set(timeLeft);
     } else {
@@ -130,52 +131,57 @@ export default class HomeComponent implements OnInit {
     }
   }
 
-  private async handleSessionCompleted(): Promise<void> {
-    const nextState: StateSessionEnum = this.getNextSessionState();
+  private async _handleSessionCompleted(): Promise<void> {
+    const nextState: StateSessionEnum = this._getNextSessionState();
+
     this.stateSession.set(nextState);
 
     if (this.stateSession() !== StateSessionEnum.WAITING) {
-      const duration = this.getSessionDuration(this.stateSession());
+      const duration: string = this._getSessionDuration(this.stateSession());
+
       this._timerService.startSession(duration);
 
       if (this.stateSession() === StateSessionEnum.BREAK) {
-        await this.handleBreakSession();
+        await this._handleBreakSession();
       } else {
-        await this.handleWorkSession();
+        await this._handleWorkSession();
       }
     }
 
     this._startMessageRotation(this.stateSession());
   }
 
-  private async handleBreakSession(): Promise<void> {
-    this.timerWork.set(this.getSessionDuration(StateSessionEnum.WORK));
+  private async _handleBreakSession(): Promise<void> {
+    this.timerWork.set(this._getSessionDuration(StateSessionEnum.WORK));
+
     await this._notificationService.notify('Descanso...', '😃 Es hora de descansar');
     await this._tauriService.showApp();
   }
 
-  private async handleWorkSession(): Promise<void> {
-    this.timerBreak.set(this.getSessionDuration(StateSessionEnum.BREAK));
+  private async _handleWorkSession(): Promise<void> {
+    this.timerBreak.set(this._getSessionDuration(StateSessionEnum.BREAK));
     await this._tauriService.hideApp();
   }
 
-  private getNextSessionState(): StateSessionEnum {
+  private _getNextSessionState(): StateSessionEnum {
     return this.stateSession() === StateSessionEnum.WORK
       ? StateSessionEnum.BREAK
       : StateSessionEnum.WORK;
   }
 
-  private resetSessionState(): void {
+  private _resetSessionState(): void {
     this.stateSession.set(StateSessionEnum.WAITING);
     this.progress.set(0);
     this.title.set(this.START_TITLE);
+
     this._startMessageRotation(this.stateSession());
-    this.timerWork.set(this.getSessionDuration(StateSessionEnum.WORK));
-    this.timerBreak.set(this.getSessionDuration(StateSessionEnum.BREAK));
+
+    this.timerWork.set(this._getSessionDuration(StateSessionEnum.WORK));
+    this.timerBreak.set(this._getSessionDuration(StateSessionEnum.BREAK));
   }
 
   private _startMessageRotation(state: StateSessionEnum): void {
-    const message = this.sessionMessages[state];
+    const message: string = this.sessionMessages[state];
 
     from(message.split(''))
       .pipe(
@@ -189,7 +195,7 @@ export default class HomeComponent implements OnInit {
       });
   }
 
-  private getSessionDuration(state: StateSessionEnum): string {
+  private _getSessionDuration(state: StateSessionEnum): string {
     const durations: Record<StateSessionEnum, string> = {
       [StateSessionEnum.WAITING]: '00:00:00',
       [StateSessionEnum.WORK]: this._sessionConfig.workDuration,

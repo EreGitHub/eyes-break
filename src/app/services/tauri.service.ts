@@ -59,7 +59,7 @@ export class TauriService {
     await invoke(event, payload);
   }
 
-  public cleanup(): void {
+  public cleanupListeners(): void {
     this._listeners.forEach(unlisten => unlisten());
     this._listeners = [];
   }
