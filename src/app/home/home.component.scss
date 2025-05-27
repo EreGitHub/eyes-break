@@ -10,9 +10,9 @@
 .eb-home-status {
   align-items: center;
   backdrop-filter: blur(4px);
-  background-color: rgba(17, 17, 17, 0.5);
+  background-color: var(--status-bg);
   border-radius: 9999px;
-  border: 1px solid #2d2d2d;
+  border: 1px solid var(--border-color);
   display: flex;
   gap: 0.75rem;
   padding: 0.75rem 1.5rem;
@@ -20,14 +20,14 @@
 
   &-indicator {
     animation: pulse 2s infinite;
-    background-color: #f59e0b;
+    background-color: var(--status-indicator);
     border-radius: 9999px;
     height: 0.75rem;
     width: 0.75rem;
   }
 
   &-text {
-    color: #d1d5db;
+    color: var(--status-text);
     font-size: 0.875rem;
   }
 }
@@ -43,10 +43,15 @@
 }
 
 .eb-home-start-button {
-  background: linear-gradient(to bottom right, #3b82f6, #8b5cf6, #ec4899);
+  background: linear-gradient(
+    to bottom right, 
+    var(--button-gradient-1), 
+    var(--button-gradient-2), 
+    var(--button-gradient-3)
+  );
   border-radius: 9999px;
   border: none;
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 25px var(--button-shadow);
   cursor: pointer;
   height: 13.5rem;
   position: relative;
@@ -78,7 +83,12 @@
     bottom: 0;
     border-radius: 50%;
     padding: 0.25rem;
-    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+    background: linear-gradient(
+      45deg, 
+      var(--button-gradient-1), 
+      var(--button-gradient-2), 
+      var(--button-gradient-3)
+    );
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -95,7 +105,7 @@
 
 .eb-home-start-inner {
   align-items: center;
-  background-color: #0f0f0f;
+  background-color: var(--button-inner-bg);
   border-radius: 9999px;
   display: flex;
   inset: 0.25rem;
@@ -112,7 +122,7 @@
 
   &-bg {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.1);
+    stroke: var(--progress-bg);
     stroke-width: 8;
     stroke-linecap: round;
     stroke-dasharray: 283;
@@ -130,7 +140,7 @@
 
   &-text {
     animation: eb-textPulse 2s ease-in-out infinite alternate;
-    color: #ffffff;
+    color: var(--text-light);
     font-size: 2.5rem;
     font-weight: 600;
     text-shadow:
@@ -150,20 +160,20 @@
   transition: transform 0.2s;
 
   h2 {
-    color: #e8eaed;
+    color: var(--text-highlight);
     font-size: 1.5rem;
     font-weight: 600;
   }
 
   .eb-home-start-title {
     &--running {
-      color: #e8eaed;
+      color: var(--text-highlight);
       font-size: 1.1rem;
       font-weight: 600;
     }
 
     &--not-running {
-      color: #e8eaed;
+      color: var(--text-highlight);
     }
   }
 }
@@ -218,7 +228,12 @@
 }
 
 .eb-home-start-glow {
-  background: linear-gradient(to bottom right, #3b82f6, #8b5cf6, #ec4899);
+  background: linear-gradient(
+    to bottom right, 
+    var(--button-gradient-1), 
+    var(--button-gradient-2), 
+    var(--button-gradient-3)
+  );
   border-radius: 9999px;
   filter: blur(16px);
   inset: -0.25rem;
@@ -233,11 +248,10 @@
 
 .eb-home-stat {
   align-items: center;
-  align-items: center;
   backdrop-filter: blur(4px);
-  background-color: rgba(17, 17, 17, 0.5);
+  background-color: var(--status-bg);
   border-radius: 1rem;
-  border: 1px solid #2d2d2d;
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -293,12 +307,12 @@
 }
 
 .eb-home-stat-label {
-  color: #9ca3af;
+  color: var(--text-muted);
   font-size: 0.875rem;
 }
 
 .eb-home-footer {
-  color: #6b7280;
+  color: var(--footer-text);
   display: flex;
   font-size: 0.875rem;
   gap: 0.5rem;
@@ -308,7 +322,7 @@
 }
 
 .eb-home-dot-small {
-  background-color: #6b7280;
+  background-color: var(--footer-dot);
   border-radius: 9999px;
   height: 0.25rem;
   width: 0.25rem;

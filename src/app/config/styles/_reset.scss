@@ -2,6 +2,7 @@
 
 /* Aquí definimos las Custom properties */
 :root {
+  /* Base Colors */
   --window-bg: #1e1e1e;
   --sidebar-bg: #252526;
   --sidebar-hover: #2d2d2d;
@@ -14,6 +15,24 @@
   --titlebar-bg: #2d2d2d;
   --titlebar-border: #1a1a1a;
   --card-bg: #2d2d2d;
+  
+  /* New Color Variables */
+  --status-indicator: #f59e0b;
+  --status-bg: rgba(17, 17, 17, 0.5);
+  --status-text: #d1d5db;
+  --button-gradient-1: #3b82f6;
+  --button-gradient-2: #8b5cf6;
+  --button-gradient-3: #ec4899;
+  --button-shadow: rgba(59, 130, 246, 0.25);
+  --button-inner-bg: #0f0f0f;
+  --progress-bg: rgba(255, 255, 255, 0.1);
+  --text-light: #ffffff;
+  --text-highlight: #e8eaed;
+  --text-muted: #9ca3af;
+  --footer-text: #6b7280;
+  --footer-dot: #6b7280;
+  
+  /* Effects */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
   --scrollbar-track: #252526;
