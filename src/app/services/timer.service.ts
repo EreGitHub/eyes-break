@@ -1,3 +1,17 @@
+// models/session-config.interface.ts
+export interface SessionTimes {
+  readonly work: string;
+  readonly break: string;
+  readonly waiting: string;
+}
+
+export interface SessionMessages {
+  readonly waiting: string;
+  readonly work: string;
+  readonly break: string;
+}
+
+// services/timer.service.ts
 import { inject, Injectable } from '@angular/core';
 import { SessionDispatchEnum } from '../models/state-session.model';
 import { TauriService } from './tauri.service';
@@ -8,7 +22,7 @@ import { TauriService } from './tauri.service';
 export class TimerService {
   private readonly _tauriService = inject(TauriService);
 
-  public async startSession(duration: string): Promise<void> {
+  public startSession(duration: string): void {
     try {
       this._tauriService.dispatch(SessionDispatchEnum.SESSION_STARTED, { durationStr: duration });
     } catch (error) {
@@ -17,7 +31,7 @@ export class TimerService {
     }
   }
 
-  public async cancelSession(): Promise<void> {
+  public cancelSession(): void {
     try {
       this._tauriService.dispatch(SessionDispatchEnum.SESSION_CANCELLED);
     } catch (error) {
