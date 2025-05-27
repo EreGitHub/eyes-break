@@ -17,19 +17,19 @@
   gap: 0.75rem;
   padding: 0.75rem 1.5rem;
   width: fit-content;
-}
 
-.eb-home-status-indicator {
-  animation: pulse 2s infinite;
-  background-color: #f59e0b;
-  border-radius: 9999px;
-  height: 0.75rem;
-  width: 0.75rem;
-}
+  &-indicator {
+    animation: pulse 2s infinite;
+    background-color: #f59e0b;
+    border-radius: 9999px;
+    height: 0.75rem;
+    width: 0.75rem;
+  }
 
-.eb-home-status-text {
-  color: #d1d5db;
-  font-size: 0.875rem;
+  &-text {
+    color: #d1d5db;
+    font-size: 0.875rem;
+  }
 }
 
 .eb-home-start-section {
@@ -52,63 +52,23 @@
   position: relative;
   transition: all 0.3s ease;
   width: 13.5rem;
-}
 
-.eb-home-start-button:hover {
-  transform: scale(1.05);
-}
+  &:hover {
+    transform: scale(1.05);
 
-.eb-home-start-button:active {
-  transform: scale(0.95);
-}
+    .eb-home-start-icon {
+      transform: scale(1.1);
+    }
 
-.eb-home-start-inner {
-  align-items: center;
-  background-color: #0f0f0f;
-  border-radius: 9999px;
-  display: flex;
-  inset: 0.25rem;
-  justify-content: center;
-  position: absolute;
-  overflow: hidden;
-}
+    &::before {
+      opacity: 0.5;
+    }
+  }
 
-.eb-home-progress {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
+  &:active {
+    transform: scale(0.95);
+  }
 
-.eb-home-progress-bg {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.1);
-  stroke-width: 8;
-  stroke-linecap: round;
-  stroke-dasharray: 283;
-  stroke-dashoffset: 0;
-}
-
-.eb-home-progress-fill {
-  fill: none;
-  stroke: url(#progress-gradient);
-  stroke-width: 8;
-  stroke-linecap: round;
-  stroke-dasharray: 283;
-  transition: stroke-dashoffset 0.3s ease;
-}
-
-.eb-home-start-button {
-  position: relative;
-  background: linear-gradient(to bottom right, #3b82f6, #8b5cf6, #ec4899);
-  border-radius: 9999px;
-  border: none;
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
-  cursor: pointer;
-  height: 13.5rem;
-  width: 13.5rem;
-
-  /* Add gradient for the progress */
   &::before {
     content: '';
     position: absolute;
@@ -131,9 +91,51 @@
     opacity: 0;
     transition: opacity 0.3s ease;
   }
+}
 
-  &:hover::before {
-    opacity: 0.5;
+.eb-home-start-inner {
+  align-items: center;
+  background-color: #0f0f0f;
+  border-radius: 9999px;
+  display: flex;
+  inset: 0.25rem;
+  justify-content: center;
+  position: absolute;
+  overflow: hidden;
+}
+
+.eb-home-progress {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+
+  &-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 0;
+  }
+
+  &-fill {
+    fill: none;
+    stroke: url(#progress-gradient);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    transition: stroke-dashoffset 0.3s ease;
+  }
+
+  &-text {
+    animation: eb-textPulse 2s ease-in-out infinite alternate;
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-shadow:
+      0 0 20px rgba(120, 219, 255, 0.8),
+      0 0 40px rgba(120, 219, 255, 0.4);
   }
 }
 
@@ -153,25 +155,17 @@
     font-weight: 600;
   }
 
-  .eb-home-start-title--running {
-    color: #e8eaed;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
+  .eb-home-start-title {
+    &--running {
+      color: #e8eaed;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
 
-  .eb-home-start-title--not-running {
-    color: #e8eaed;
+    &--not-running {
+      color: #e8eaed;
+    }
   }
-}
-
-.eb-home-progress-text {
-  animation: eb-textPulse 2s ease-in-out infinite alternate;
-  color: #ffffff;
-  font-size: 2.5rem;
-  font-weight: 600;
-  text-shadow:
-    0 0 20px rgba(120, 219, 255, 0.8),
-    0 0 40px rgba(120, 219, 255, 0.4);
 }
 
 @keyframes eb-textPulse {
@@ -188,23 +182,39 @@
   }
 }
 
-.eb-home-start-button:hover .eb-home-start-icon {
-  transform: scale(1.1);
+.eb-home-dots {
+  span {
+    animation: eb-home-blink 1.5s infinite;
+    opacity: 0;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    &:nth-child(4) {
+      animation-delay: 0.9s;
+    }
+  }
 }
 
-.eb-home-dots span {
-  animation: eb-home-blink 1.5s infinite;
-  opacity: 0;
-}
-
-.eb-home-dots span:nth-child(1) {
-  animation-delay: 0s;
-}
-.eb-home-dots span:nth-child(2) {
-  animation-delay: 0.3s;
-}
-.eb-home-dots span:nth-child(3) {
-  animation-delay: 0.6s;
+@keyframes eb-home-blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .eb-home-start-glow {
