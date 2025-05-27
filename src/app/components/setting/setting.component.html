@@ -1,0 +1,98 @@
+<article class="settings-container">
+  <h2 class="settings-title">Configuración</h2>
+
+  <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()" class="settings-form">
+    <div class="form-group-container">
+      <div class="form-group">
+        <label for="workTime" class="form-label">Tiempo de trabajo</label>
+        <div class="time-input-container">
+          <input
+            type="time"
+            id="workTime"
+            formControlName="workTime"
+            step="1"
+            class="time-input"
+            [ngClass]="{
+              'is-invalid':
+                settingsForm.get('workTime')?.invalid && settingsForm.get('workTime')?.touched,
+            }"
+            pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+          />
+          <span class="time-format">HH:MM:SS</span>
+        </div>
+        <div
+          *ngIf="settingsForm.get('workTime')?.invalid && settingsForm.get('workTime')?.touched"
+          class="error-message"
+        >
+          {{ getTimeErrorMessage('workTime') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="breakTime" class="form-label">Tiempo de descanso</label>
+        <div class="time-input-container">
+          <input
+            type="time"
+            id="breakTime"
+            formControlName="breakTime"
+            step="1"
+            class="time-input"
+            [ngClass]="{
+              'is-invalid':
+                settingsForm.get('breakTime')?.invalid && settingsForm.get('breakTime')?.touched,
+            }"
+            pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+          />
+          <span class="time-format">HH:MM:SS</span>
+        </div>
+        <div
+          *ngIf="settingsForm.get('breakTime')?.invalid && settingsForm.get('breakTime')?.touched"
+          class="error-message"
+        >
+          {{ getTimeErrorMessage('breakTime') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group-checkbox">
+      <div class="form-group">
+        <label class="checkbox-container">
+          <input
+            type="checkbox"
+            id="notificationsEnabled"
+            formControlName="notificationsEnabled"
+            class="checkbox-input"
+          />
+          <span class="checkmark"></span>
+          <span class="checkbox-label">Activar notificaciones</span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-container">
+          <input
+            type="checkbox"
+            id="soundEnabled"
+            formControlName="soundEnabled"
+            class="checkbox-input"
+          />
+          <span class="checkmark"></span>
+          <span class="checkbox-label">Activar sonido</span>
+        </label>
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="save-button"
+      [class.save-button--disabled]="settingsForm.invalid"
+      [disabled]="settingsForm.invalid"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+      </svg>
+
+      <span class="save-button__label">Guardar</span>
+    </button>
+  </form>
+</article>

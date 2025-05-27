@@ -11,25 +11,30 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { concatMap, delay, from, of, Subject, takeUntil, timer } from 'rxjs';
+import { fadeScale } from '../../config/animations/fade-scale';
+import { ClickOutsideDirective } from '../../directives/click-outside-directive.directive';
 import { SessionEventPayloadEnum, StateSessionEnum } from '../../models/state-session.model';
 import { AudioManagerService } from '../../services/audio-manager.service';
 import { NotificationService } from '../../services/notification.service';
 import { TauriService } from '../../services/tauri.service';
 import { TimerService } from '../../services/timer.service';
 import { SESSION_CONFIG } from '../../tokens/session-config.token';
+import { SettingComponent } from '../setting/setting.component';
 // import { getCurrentWindow } from '@tauri-apps/api/window';
 
 @Component({
   selector: 'eb-home',
-  imports: [NgClass],
+  imports: [NgClass, SettingComponent, ClickOutsideDirective],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [fadeScale],
 })
 export default class HomeComponent implements OnInit {
   public animatedAfterStarted: WritableSignal<boolean>;
   public currentMessage: WritableSignal<string>;
+  public isShowModal: WritableSignal<boolean>;
   public progress: WritableSignal<number>;
   public stateSession: WritableSignal<StateSessionEnum>;
   public timerBreak: WritableSignal<string>;
@@ -66,6 +71,7 @@ export default class HomeComponent implements OnInit {
     this.title = signal(this.START_TITLE);
     this.timerBreak = signal(this._EMPTY);
     this.timerWork = signal(this._EMPTY);
+    this.isShowModal = signal(false);
     this._cancelTimer$ = new Subject<void>();
     this.progress = signal(0);
   }
@@ -80,6 +86,14 @@ export default class HomeComponent implements OnInit {
     } else {
       this._startSession();
     }
+  }
+
+  public showModal(): void {
+    this.isShowModal.set(true);
+  }
+
+  public closeModal(): void {
+    this.isShowModal.set(false);
   }
 
   private async _initializeApp(): Promise<void> {
