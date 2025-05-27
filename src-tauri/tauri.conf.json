@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "eyes-break",
-  "version": "0.0.0-RC5",
+  "version": "0.0.0-RC6",
   "identifier": "com.eyes-break.app",
   "build": {
     "frontendDist": "../dist/eyes-break/browser",
