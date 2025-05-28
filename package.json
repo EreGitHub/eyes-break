@@ -27,6 +27,7 @@
     "@tauri-apps/api": "^2.5.0",
     "@tauri-apps/plugin-notification": "~2",
     "@tauri-apps/plugin-opener": "^2.2.7",
+    "@jsverse/transloco": "^7.5.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

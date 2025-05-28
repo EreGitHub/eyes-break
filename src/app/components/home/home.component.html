@@ -19,7 +19,7 @@
 
     <div class="eb-home-stat-content">
       <label class="eb-home-stat-time">{{ timerWork() }}</label>
-      <label class="eb-home-stat-label">Tiempo de trabajo</label>
+      <label class="eb-home-stat-label">{{ 'home.workTime' | transloco }}</label>
     </div>
   </div>
 
@@ -43,12 +43,16 @@
 
     <div class="eb-home-stat-content">
       <label class="eb-home-stat-time">{{ timerBreak() }}</label>
-      <label class="eb-home-stat-label">Tiempo de descanso</label>
+      <label class="eb-home-stat-label">{{ 'home.breakTime' | transloco }}</label>
     </div>
   </div>
 
   <div class="eb-home-status">
     <div class="eb-home-status-indicator"></div>
+
+    <!-- <label class="eb-home-status-text">
+      {{ 'home.messages.waiting' | transloco }}
+    </label> -->
     <label class="eb-home-status-text">
       {{ currentMessage() }}
     </label>
@@ -76,7 +80,7 @@
         >
           @if (stateSession() === STATE_SESSION.WAITING) {
             <h2 class="eb-home-start-title--not-running">
-              {{ title() }}
+              {{ title() | transloco }}
               <span class="eb-home-dots">
                 <span>.</span>
                 <span>.</span>
@@ -85,7 +89,7 @@
             </h2>
           } @else {
             <section class="eb-home-running-section">
-              <h2 class="eb-home-start-title--running">{{ title() }}</h2>
+              <h2 class="eb-home-start-title--running">{{ title() | transloco }}</h2>
 
               <span class="eb-home-progress-text">{{ progress() }}%</span>
             </section>
@@ -111,7 +115,7 @@
 
   <div class="eb-home-footer">
     <div class="eb-home-dot-small"></div>
-    <span>Mantén el enfoque y la productividad</span>
+    <span>{{ 'home.footerMessage' | transloco }}</span>
     <div class="eb-home-dot-small"></div>
   </div>
 

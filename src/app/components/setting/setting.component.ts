@@ -1,10 +1,12 @@
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   OnInit,
+  signal,
   ViewEncapsulation,
+  WritableSignal,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -15,26 +17,43 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { TranslocoModule } from '@jsverse/transloco';
+import { displayLanguageOptions } from '../../config/transloco.config';
+import { AvailableLangModel } from '../../models/available-lang.model';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'eb-setting',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [FormsModule, NgClass, ReactiveFormsModule, TranslocoModule],
   templateUrl: './setting.component.html',
   styleUrls: ['./setting.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingComponent implements OnInit {
+  public availableLangs: WritableSignal<AvailableLangModel[]>;
+
+  public selectedLangId: string;
   public settingsForm!: FormGroup;
 
   private readonly _EMPTY: string = '';
 
+  private readonly _translationService = inject(TranslationService);
   private readonly _formBuilder = inject(FormBuilder);
+
+  constructor() {
+    this.availableLangs = signal(displayLanguageOptions);
+    this.selectedLangId = this._translationService.getActiveLang();
+  }
 
   public ngOnInit(): void {
     this._initializeForm();
     this._loadSettings();
+  }
+
+  public onLanguageChange(): void {
+    this._translationService.setActiveLang(this.selectedLangId);
   }
 
   public saveSettings(): void {
@@ -48,7 +67,35 @@ export class SettingComponent implements OnInit {
       };
 
       localStorage.setItem('appSettings', JSON.stringify(formattedSettings));
+
+      // Show success message or notification
+      // You can implement a toast or notification service here
+      console.log('Settings saved successfully');
+    } else {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.settingsForm.controls).forEach(key => {
+        const control = this.settingsForm.get(key);
+        control?.markAsTouched();
+      });
     }
+  }
+
+  public getTimeErrorMessage(controlName: string): string {
+    const control = this.settingsForm.get(controlName);
+
+    if (control?.hasError('required')) {
+      return this._translationService.translate('errors.required');
+    }
+
+    if (control?.hasError('pattern') || control?.hasError('invalidFormat')) {
+      return this._translationService.translate('errors.invalidTimeFormat');
+    }
+
+    if (control?.hasError('zeroTime')) {
+      return this._translationService.translate('errors.zeroTime');
+    }
+
+    return this._EMPTY;
   }
 
   // Format the time values to ensure HH:MM:SS format
@@ -60,24 +107,6 @@ export class SettingComponent implements OnInit {
     const [h = '00', m = '00', s = '00'] = time.split(':');
 
     return `${h.padStart(2, '0')}:${m.padStart(2, '0')}:${s.padStart(2, '0')}`;
-  }
-
-  public getTimeErrorMessage(controlName: string): string {
-    const control = this.settingsForm.get(controlName);
-
-    if (control?.hasError('required')) {
-      return 'Este campo es requerido';
-    }
-
-    if (control?.hasError('pattern') || control?.hasError('invalidFormat')) {
-      return 'Formato inválido. Usa HH:MM:SS (24h)';
-    }
-
-    if (control?.hasError('zeroTime')) {
-      return 'El tiempo no puede ser 00:00:00';
-    }
-
-    return this._EMPTY;
   }
 
   private _initializeForm(): void {
@@ -131,18 +160,31 @@ export class SettingComponent implements OnInit {
   }
 
   private _timeValidator(control: FormControl): ValidationErrors | null {
-    const time = control.value;
+    const value = control.value;
 
-    if (!time) {
-      return null;
+    if (!value) {
+      return {
+        required: true,
+      };
     }
 
-    // Ensure the time is in HH:MM:SS format
-    if (!/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(time)) {
-      return { invalidFormat: true };
+    // Check if the time is in HH:MM:SS format
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+
+    if (!timeRegex.test(value)) {
+      return {
+        invalidFormat: true,
+      };
     }
 
-    const [hours, minutes, seconds] = time.split(':').map(Number);
+    // // Check if time is 00:00:00
+    // if (value === '00:00:00') {
+    //   return {
+    //     zeroTime: true,
+    //   };
+    // }
+
+    const [hours, minutes, seconds] = value.split(':').map(Number);
 
     if (hours === 0 && minutes === 0 && seconds === 0) {
       return { zeroTime: true };
@@ -157,7 +199,12 @@ export class SettingComponent implements OnInit {
     if (savedSettings) {
       try {
         const settings = JSON.parse(savedSettings);
-        this.settingsForm.patchValue(settings);
+        this.settingsForm.patchValue({
+          workTime: settings.workTime || '00:25:00',
+          breakTime: settings.breakTime || '00:05:00',
+          notificationsEnabled: settings.notificationsEnabled !== false,
+          soundEnabled: settings.soundEnabled !== false,
+        });
       } catch (e) {
         console.error('Error loading settings:', e);
       }
