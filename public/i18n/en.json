@@ -1,0 +1,42 @@
+{
+  "common": {
+    "workTime": "Work Time",
+    "breakTime": "Break Time",
+    "settings": "Settings",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "home": {
+    "workTime": "Work Time",
+    "breakTime": "Break Time",
+    "footerMessage": "Stay focused and productive",
+    "start": "Start",
+    "stop": "Stop",
+    "pause": "Pause",
+    "resume": "Resume",
+    "reset": "Reset",
+    "messages": {
+      "waiting": "Waiting to start...",
+      "work": "Focus on your work...",
+      "break": "Look 20 feet away for 20 seconds"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languages": {
+      "en": "English",
+      "es": "Spanish"
+    },
+    "workDuration": "Work Duration (minutes)",
+    "breakDuration": "Break Duration (minutes)",
+    "notifications": "Enable Notifications",
+    "sounds": "Enable Sounds"
+  },
+  "notifications": {
+    "break": {
+      "title": "Break Time!",
+      "message": "😃 Time to take a break and rest your eyes"
+    }
+  }
+}

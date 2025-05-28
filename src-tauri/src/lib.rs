@@ -4,7 +4,7 @@ use std::sync::{Arc, Mutex};
 use tauri::{Emitter,Window};
 use tokio::time::{sleep, Duration};
 use lazy_static::lazy_static;
-// use tauri::Manager;
+use tauri::Manager;
 // use tauri::menu::{MenuBuilder, MenuItemBuilder};
 // use tauri::tray::{TrayIconBuilder};
 
@@ -153,6 +153,12 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .setup(|app| {
+
+            #[cfg(debug_assertions)] // Solo en modo desarrollo
+            {
+                let window = app.get_webview_window("main").unwrap();
+                window.open_devtools();
+            }
 
             // let quit = MenuItemBuilder::new("Quit").id("quit").build(app).unwrap();
             // let hide = MenuItemBuilder::new("Hide").id("hide").build(app).unwrap();

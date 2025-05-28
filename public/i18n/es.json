@@ -1,0 +1,42 @@
+{
+  "common": {
+    "workTime": "Tiempo de Trabajo",
+    "breakTime": "Tiempo de Descanso",
+    "settings": "Configuración",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "home": {
+    "workTime": "Tiempo de Trabajo",
+    "breakTime": "Tiempo de Descanso",
+    "footerMessage": "Mantén el enfoque y la productividad",
+    "start": "Comenzar",
+    "stop": "Detener",
+    "pause": "Pausar",
+    "resume": "Continuar",
+    "reset": "Reiniciar",
+    "messages": {
+      "waiting": "En espera para iniciar...",
+      "work": "Enfócate en tu trabajo...",
+      "break": "Mira 6 metros durante 20 segundos"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "language": "Idioma",
+    "languages": {
+      "en": "Inglés",
+      "es": "Español"
+    },
+    "workDuration": "Duración del Trabajo (minutos)",
+    "breakDuration": "Duración del Descanso (minutos)",
+    "notifications": "Activar Notificaciones",
+    "sounds": "Activar Sonidos"
+  },
+  "notifications": {
+    "break": {
+      "title": "¡Hora de descansar!",
+      "message": "😃 Es hora de tomar un descanso y relajar la vista"
+    }
+  }
+}
