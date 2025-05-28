@@ -52,7 +52,6 @@
   border-radius: 9999px;
   border: none;
   box-shadow: 0 0 25px var(--button-shadow);
-  cursor: pointer;
   height: 13.5rem;
   position: relative;
   transition: all 0.3s ease;
@@ -364,6 +363,26 @@
   align-items: center;
 }
 
+.eb-home-settings-button {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  // -webkit-transform: translateZ(0);
+  // will-change: transform;
+
+  &:hover {
+    background-color: #1d273d;
+    border-radius: 50%;
+  }
+}
+
+.eb-home-settings-button svg {
+  fill: var(--text-muted);
+  width: 1.3rem;
+  height: 1.3rem;
+  transition: transform 0.2s ease;
+}
+
 .eb-home-dot-small {
   background-color: var(--footer-dot);
   border-radius: 9999px;
@@ -389,4 +408,27 @@
   50% {
     opacity: 1;
   }
+}
+
+.eb-home-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.eb-home-modal-content {
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.eb-home-modal {
+  background-color: #161e2f;
+  border-radius: 0.5rem;
+  width: 35rem;
 }
