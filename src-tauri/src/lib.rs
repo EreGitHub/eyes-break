@@ -1,10 +1,10 @@
-use std::path::Path;
-use std::io::{self, Write};
-use std::sync::{Arc, Mutex};
-use tauri::{Emitter,Window};
-use tokio::time::{sleep, Duration};
 use lazy_static::lazy_static;
+use std::io::{self, Write};
+use std::path::Path;
+use std::sync::{Arc, Mutex};
 use tauri::Manager;
+use tauri::{Emitter, Window};
+use tokio::time::{sleep, Duration};
 // use tauri::menu::{MenuBuilder, MenuItemBuilder};
 // use tauri::tray::{TrayIconBuilder};
 
@@ -77,19 +77,18 @@ async fn start_session(window: Window, duration_str: String) {
     let Some(total_time_ms) = parse_duration_string(&duration_str) else {
         // let _ = window.emit("session-error", "Formato de tiempo inválido");
         println!("Formato de tiempo inválido");
-        let _ = window.emit("session-started", false);    
+        let _ = window.emit("session-started", false);
 
         return;
     };
 
     let _ = window.emit("session-started", true);
 
-      // Reset cancel flag
+    // Reset cancel flag
     {
         let mut cancel = CANCEL_FLAG.lock().unwrap();
         *cancel = false;
     }
-
 
     // let step_ms: u64 = 1000;
     let step_ms: u64 = 100;
@@ -100,8 +99,8 @@ async fn start_session(window: Window, duration_str: String) {
         {
             let cancel = CANCEL_FLAG.lock().unwrap();
             if *cancel {
-                let _ = window.emit("session-cancelled", true);       
-                println!();                         
+                let _ = window.emit("session-cancelled", true);
+                println!();
                 println!("👀 Sesión cancelada..");
                 return;
             }
@@ -113,9 +112,12 @@ async fn start_session(window: Window, duration_str: String) {
         let time_left_str = format_remaining_time(remaining_ms);
 
         let _ = window.emit("session-progress", clamped_percentage);
-        let _ = window.emit("session-time-progress", time_left_str.clone());        
-        
-        print!("\r{:.0}% - ⏳ Tiempo restante: {}", clamped_percentage, time_left_str);
+        let _ = window.emit("session-time-progress", time_left_str.clone());
+
+        print!(
+            "\r{:.0}% - ⏳ Tiempo restante: {}",
+            clamped_percentage, time_left_str
+        );
         io::stdout().flush().unwrap();
 
         sleep(Duration::from_millis(step_ms)).await;
@@ -151,9 +153,9 @@ fn list_files(path: &str) -> Vec<String> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_notification::init())
         .setup(|app| {
-
             #[cfg(debug_assertions)] // Solo en modo desarrollo
             {
                 let window = app.get_webview_window("main").unwrap();
@@ -169,7 +171,7 @@ pub fn run() {
             // .items(&[&quit, &hide, &show, &test])
             // .build()
             // .unwrap();
-    
+
             // let _ = TrayIconBuilder::new()
             // .icon(app.default_window_icon().unwrap().clone())
             // .menu(&menu)
@@ -193,7 +195,7 @@ pub fn run() {
             // // .on_tray_icon_event(|tray_icon, event| match event.click_type {
             // //   ClickType::Left => {
             // //     dbg!("system tray received a left click");
-    
+
             // //     // let window = tray_icon.app_handle().get_webview_window("main").unwrap();
             // //     // let _ = window.show().unwrap();
             // //     // let logical_size = tauri::LogicalSize::<f64> {
@@ -220,12 +222,12 @@ pub fn run() {
             // //   }
             // // })
             // .build(app);
-            
+
             // let window = app.get_webview_window("main").unwrap();
             // let is_dev: bool = tauri::is_dev();
-            // if is_dev {                
+            // if is_dev {
             //     window.open_devtools();
-            // } else {                
+            // } else {
             //     window.close_devtools();
             // }
 
@@ -235,13 +237,19 @@ pub fn run() {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)                        
+                        .level(log::LevelFilter::Info)
                         .build(),
                 )?;
-            }            
+            }
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet, start_session, list_files, cancel_session, exit_app])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            start_session,
+            list_files,
+            cancel_session,
+            exit_app
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -1,6 +1,6 @@
 [package]
 name = "app"
-version = "0.1.0"
+version = "0.0.0-RC8"
 description = "A Tauri App"
 authors = ["Ruben Lupate <ruben.lupate.c@gmail.com>"]
 license = ""
@@ -26,3 +26,4 @@ tauri-plugin-log = "2.0.0-rc"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 tauri-plugin-notification = "2"
 lazy_static = "1.4"
+tauri-plugin-store = "2"
