@@ -9,7 +9,7 @@ export class AppSettingsService {
 
   private _store: Promise<Store>;
 
-  private readonly _STORE_NAME = 'settings.dat';
+  private readonly _STORE_NAME = 'settings.json';
   private readonly _STORE_KEY = 'appSettings';
 
   private readonly _defaultSettings = inject(APP_SETTINGS);
