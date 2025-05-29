@@ -7,16 +7,27 @@ use tauri::{Emitter, Window};
 use tokio::time;
 use crate::enums::error::SessionError;
 
+/// Global flags for session control
+/// This flag is used to cancel an ongoing session
+pub static CANCEL_FLAG: AtomicBool = AtomicBool::new(false);
+
+/// Update interval in milliseconds
 const TICK_INTERVAL_MS: u64 = 100;
+/// Milliseconds per second
 const MS_PER_SECOND: u64 = 1000;
+/// Seconds per minute
 const SECONDS_PER_MINUTE: u64 = 60;
+/// Minutes per hour
 const MINUTES_PER_HOUR: u64 = 60;
+/// Seconds per hour
 const SECONDS_PER_HOUR: u64 = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
 
-static CANCEL_FLAG: AtomicBool = AtomicBool::new(false);
-
-// parse duration string (HH:MM:SS) into milliseconds
-fn parse_duration_string(duration: &str) -> Result<u64, SessionError> {
+/// Parses a duration string (HH:MM:SS) into milliseconds
+/// # Arguments
+/// * `duration` - A string containing the duration in HH:MM:SS format
+/// # Returns
+/// * `Result<u64, SessionError>` - Total milliseconds or an error
+pub fn parse_duration_string(duration: &str) -> Result<u64, SessionError> {
     let parts: Vec<&str> = duration.split(':').collect();
 
     if parts.len() != 3 {
@@ -45,8 +56,12 @@ fn parse_duration_string(duration: &str) -> Result<u64, SessionError> {
     Ok(total_ms)
 }
 
-// Format remaining time as HH:MM:SS or MM:SS
-fn format_remaining_time(ms: u64) -> String {
+/// Formats remaining time as HH:MM:SS or MM:SS
+/// # Arguments
+/// * `ms` - Time in milliseconds
+/// # Returns
+/// * `String` - Formatted time string
+pub fn format_remaining_time(ms: u64) -> String {
     let total_seconds:u64 = ms / MS_PER_SECOND;
     let hours:u64 = total_seconds / SECONDS_PER_HOUR;
     let minutes:u64 = (total_seconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE;
@@ -59,6 +74,12 @@ fn format_remaining_time(ms: u64) -> String {
     }
 }
 
+/// Starts a new session with the specified duration
+/// # Arguments
+/// * `window` - Tauri window
+/// * `duration_str` - Duration in HH:MM:SS format
+/// # Returns
+/// * `Result<(), String>` - Operation result
 #[tauri::command]
 pub async fn start_session(window: Window, duration_str: String) -> Result<(), String> {
     // Reset cancellation flag at the start
@@ -105,9 +126,9 @@ pub async fn start_session(window: Window, duration_str: String) -> Result<(), S
             let _ = window.emit("session-time-progress", time_left_str.clone());
 
             print!(
-                "\r{:.0}% - ⏳ Time remaining: {}",
+                "\r🟢 Running... {:.0}% - ⏳ Time remaining: {}",
                 clamped_percentage, time_left_str
-            );
+            );            
 
             let _ = io::stdout().flush();
 
@@ -124,6 +145,7 @@ pub async fn start_session(window: Window, duration_str: String) -> Result<(), S
     Ok(())
 }
 
+/// Cancels the current session
 #[tauri::command]
 pub fn cancel_session() {
     CANCEL_FLAG.store(true, Ordering::SeqCst);

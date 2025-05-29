@@ -1,7 +1,9 @@
 use tauri::Manager;
-mod session;
-use session::{start_session, cancel_session};
-mod enums;
+
+pub mod enums;
+pub mod session;
+
+pub use session::{start_session, cancel_session};
 
 #[tauri::command]
 fn greet(name: String) -> String {    
