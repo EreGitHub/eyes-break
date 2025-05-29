@@ -10,14 +10,14 @@ export const displayLanguageOptions: AvailableLangModel[] = [
   { id: LangEnum.EN, label: 'English' },
   { id: LangEnum.ES, label: 'Español' },
 ];
+const supportedLanguages = [LangEnum.EN, LangEnum.ES];
+export const defaultLanguage = LangEnum.EN;
 
-export const supportedLanguages = [LangEnum.EN, LangEnum.ES];
-
-const config: TranslocoGlobalConfig = {
+const configTransloco: TranslocoGlobalConfig = {
   rootTranslationsPath: 'i18n/',
   langs: supportedLanguages,
-  defaultLang: LangEnum.EN,
+  defaultLang: defaultLanguage,
   keysManager: {},
 };
 
-export default config;
+export default configTransloco;

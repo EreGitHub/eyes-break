@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  effect,
   inject,
   OnInit,
   signal,
@@ -14,13 +15,14 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { concatMap, delay, from, of, Subject, switchMap, takeUntil, timer } from 'rxjs';
 import { fadeScale } from '../../config/animations/fade-scale';
 import { ClickOutsideDirective } from '../../directives/click-outside-directive.directive';
+import { AppSettings } from '../../models/session-conf.model';
 import { SessionEventPayloadEnum, StateSessionEnum } from '../../models/state-session.model';
+import { AppSettingsService } from '../../services/app-settings.service';
 import { AudioManagerService } from '../../services/audio-manager.service';
 import { NotificationService } from '../../services/notification.service';
 import { TauriService } from '../../services/tauri.service';
 import { TimerService } from '../../services/timer.service';
 import { TranslationService } from '../../services/translation.service';
-import { SESSION_CONFIG } from '../../tokens/session-config.token';
 import { SettingComponent } from '../setting/setting.component';
 // import { getCurrentWindow } from '@tauri-apps/api/window';
 
@@ -48,7 +50,7 @@ export default class HomeComponent implements OnInit {
   private _cancelTimer$: Subject<void>;
   private _cancelAnimation$: Subject<void>;
 
-  private readonly _ANIMATED_AFTER_STARTED_DELAY: number = 4000;
+  private readonly _ANIMATED_AFTER_STARTED_DELAY: number = 3000;
   private readonly _EMPTY: string = '';
   private readonly _sessionDurationKeys: Record<StateSessionEnum, string>;
   private readonly _sessionMessageKeys: Record<StateSessionEnum, string>;
@@ -58,7 +60,7 @@ export default class HomeComponent implements OnInit {
   private readonly _audioManagerService = inject(AudioManagerService);
   private readonly _notificationService = inject(NotificationService);
   private readonly _translationService = inject(TranslationService);
-  private readonly _sessionConfig = inject(SESSION_CONFIG);
+  private readonly _appSettingsService = inject(AppSettingsService);
   private readonly _tauriService = inject(TauriService);
   private readonly _timerService = inject(TimerService);
   private readonly _destroyRef = inject(DestroyRef);
@@ -66,8 +68,8 @@ export default class HomeComponent implements OnInit {
   constructor() {
     this._sessionDurationKeys = {
       [StateSessionEnum.WAITING]: '00:00:00',
-      [StateSessionEnum.WORK]: this._sessionConfig.workDuration,
-      [StateSessionEnum.BREAK]: this._sessionConfig.breakDuration,
+      [StateSessionEnum.WORK]: this._appSettingsService.settings().workTime,
+      [StateSessionEnum.BREAK]: this._appSettingsService.settings().breakTime,
     };
     this._sessionMessageKeys = {
       [StateSessionEnum.WAITING]: 'home.messages.waiting',
@@ -84,6 +86,12 @@ export default class HomeComponent implements OnInit {
     this._cancelAnimation$ = new Subject<void>();
     this._cancelTimer$ = new Subject<void>();
     this.progress = signal(0);
+
+    effect(() => {
+      const settings: AppSettings = this._appSettingsService.settings();
+
+      this._updateSessionDurations(settings);
+    });
   }
 
   public async ngOnInit(): Promise<void> {
@@ -201,18 +209,26 @@ export default class HomeComponent implements OnInit {
   private async _handleBreakSession(): Promise<void> {
     this.timerWork.set(this._sessionDurationKeys[StateSessionEnum.WORK]);
 
-    this._audioManagerService.playBreakSound();
-    await this._notificationService.notify(
-      this._translationService.translate('notifications.break.title'),
-      this._translationService.translate('notifications.break.message')
-    );
+    if (this._appSettingsService.settings().soundEnabled) {
+      this._audioManagerService.playBreakSound();
+    }
+
+    if (this._appSettingsService.settings().notificationsEnabled) {
+      await this._notificationService.notify(
+        this._translationService.translate('notifications.break.title'),
+        this._translationService.translate('notifications.break.message')
+      );
+    }
+
     await this._tauriService.showApp();
   }
 
   private async _handleWorkSession(): Promise<void> {
     this.timerBreak.set(this._sessionDurationKeys[StateSessionEnum.BREAK]);
 
-    this._audioManagerService.playWorkSound();
+    if (this._appSettingsService.settings().soundEnabled) {
+      this._audioManagerService.playWorkSound();
+    }
     this._startAnimated();
   }
 
@@ -244,7 +260,9 @@ export default class HomeComponent implements OnInit {
         switchMap((message: string) =>
           from(message.split(this._EMPTY)).pipe(
             concatMap((_, index: number) =>
-              of(message.slice(0, index + 1)).pipe(delay(this._sessionConfig.messageAnimationDelay))
+              of(message.slice(0, index + 1)).pipe(
+                delay(this._appSettingsService.settings().messageAnimationDelay)
+              )
             )
           )
         ),
@@ -254,5 +272,15 @@ export default class HomeComponent implements OnInit {
       .subscribe(partialMessage => {
         this.currentMessage.set(partialMessage);
       });
+  }
+
+  private _updateSessionDurations(settings: AppSettings): void {
+    this._sessionDurationKeys[StateSessionEnum.WORK] = settings.workTime;
+    this._sessionDurationKeys[StateSessionEnum.BREAK] = settings.breakTime;
+
+    if (this.stateSession() === StateSessionEnum.WAITING) {
+      this.timerWork.set(settings.workTime);
+      this.timerBreak.set(settings.breakTime);
+    }
   }
 }

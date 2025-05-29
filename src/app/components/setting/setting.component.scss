@@ -221,11 +221,11 @@ select.form-select {
   margin-top: 0.5rem;
 }
 
-.save-button {
+.button {
   -webkit-tap-highlight-color: transparent;
   align-items: center;
   border-radius: 10px;
-  border: 1px solid #838383;
+  border: 1px solid #595858;
   color: #fff;
   display: inline-flex;
   font-size: 16px;
@@ -235,15 +235,8 @@ select.form-select {
   transition: all 0.2s ease;
   width: 100%;
 
-  svg {
-    width: 24px;
-    height: 24px;
-    fill: #e8eaed;
-    margin-right: 5px;
-  }
-
   &:hover {
-    background-color: #313131;
+    border-color: var(--primary);
   }
 
   &:disabled,
@@ -259,4 +252,9 @@ select.form-select {
       transform: none;
     }
   }
+}
+
+.form-group-buttons {
+  display: flex;
+  gap: 1rem;
 }

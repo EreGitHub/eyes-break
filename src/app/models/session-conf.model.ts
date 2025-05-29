@@ -1,6 +1,11 @@
-export interface SessionConfig {
-  breakDuration: string;
-  isActiveNotification: boolean;
+import { LangEnum } from '../config/transloco.config';
+
+export interface AppSettings {
+  // [key: string]: any; // For any additional settings
+  breakTime: string;
+  language: LangEnum;
   messageAnimationDelay: number;
-  workDuration: string;
+  notificationsEnabled: boolean;
+  soundEnabled: boolean;
+  workTime: string;
 }

@@ -12,29 +12,29 @@ export class AudioManagerService {
     this._workSound = new Audio('sounds/work.wav');
   }
 
-  public playBreakSound(): void {
+  public async playBreakSound(): Promise<void> {
     this._breakSound.currentTime = 0;
 
     this._breakSound.load();
-    this._breakSound.play().catch(error => {
+    await this._breakSound.play().catch(error => {
       console.error('Error playing break sound:', error);
     });
   }
 
-  public playWelcomeSound(): void {
+  public async playWelcomeSound(): Promise<void> {
     this._welcomeSound.currentTime = 0;
 
     this._welcomeSound.load();
-    this._welcomeSound.play().catch(error => {
+    await this._welcomeSound.play().catch(error => {
       console.error('Error playing welcome sound:', error);
     });
   }
 
-  public playWorkSound(): void {
+  public async playWorkSound(): Promise<void> {
     this._workSound.currentTime = 0;
 
     this._workSound.load();
-    this._workSound.play().catch(error => {
+    await this._workSound.play().catch(error => {
       console.error('Error playing work sound:', error);
     });
   }

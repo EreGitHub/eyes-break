@@ -4,7 +4,11 @@
     "breakTime": "Tiempo de Descanso",
     "settings": "Configuración",
     "save": "Guardar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "reset": "Reiniciar valores por defecto",
+    "quit": "Salir",
+    "hide": "Ocultar",
+    "show": "Mostrar"
   },
   "home": {
     "workTime": "Tiempo de Trabajo",
@@ -38,5 +42,10 @@
       "title": "¡Hora de descansar!",
       "message": "😃 Es hora de tomar un descanso y relajar la vista"
     }
+  },
+  "errors": {
+    "required": "Este campo es obligatorio",
+    "invalidTimeFormat": "Formato de tiempo inválido. Por favor, use HH:MM:SS",
+    "zeroTime": "El tiempo no puede ser cero"
   }
 }

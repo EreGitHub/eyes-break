@@ -99,17 +99,19 @@
       </div>
     </div>
 
-    <button
-      type="submit"
-      class="save-button"
-      [class.save-button--disabled]="settingsForm.invalid"
-      [disabled]="settingsForm.invalid"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
-        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-      </svg>
+    <div class="form-group-buttons">
+      <button type="button" class="button" (click)="resetSettings()">
+        <span class="button__label">{{ 'common.reset' | transloco }}</span>
+      </button>
 
-      <span class="save-button__label">{{ 'common.save' | transloco }}</span>
-    </button>
+      <button
+        type="submit"
+        class="button"
+        [class.save-button--disabled]="settingsForm.invalid"
+        [disabled]="settingsForm.invalid"
+      >
+        <span class="button__label">{{ 'common.save' | transloco }}</span>
+      </button>
+    </div>
   </form>
 </article>

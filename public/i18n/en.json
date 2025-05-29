@@ -4,7 +4,11 @@
     "breakTime": "Break Time",
     "settings": "Settings",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "reset": "Reset to default values",
+    "quit": "Quit",
+    "hide": "Hide",
+    "show": "Show"
   },
   "home": {
     "workTime": "Work Time",
@@ -38,5 +42,10 @@
       "title": "Break Time!",
       "message": "😃 Time to take a break and rest your eyes"
     }
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidTimeFormat": "Invalid time format. Please use HH:MM:SS",
+    "zeroTime": "Time cannot be zero"
   }
 }

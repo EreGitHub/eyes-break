@@ -4,6 +4,7 @@ import {
   Component,
   inject,
   OnInit,
+  output,
   signal,
   ViewEncapsulation,
   WritableSignal,
@@ -20,7 +21,10 @@ import {
 import { TranslocoModule } from '@jsverse/transloco';
 import { displayLanguageOptions } from '../../config/transloco.config';
 import { AvailableLangModel } from '../../models/available-lang.model';
+import { AppSettings } from '../../models/session-conf.model';
+import { AppSettingsService } from '../../services/app-settings.service';
 import { TranslationService } from '../../services/translation.service';
+import { LangEnum } from './../../config/transloco.config';
 
 @Component({
   selector: 'eb-setting',
@@ -32,14 +36,17 @@ import { TranslationService } from '../../services/translation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingComponent implements OnInit {
+  public close = output<void>();
+
   public availableLangs: WritableSignal<AvailableLangModel[]>;
 
-  public selectedLangId: string;
+  public selectedLangId: LangEnum;
   public settingsForm!: FormGroup;
 
   private readonly _EMPTY: string = '';
 
   private readonly _translationService = inject(TranslationService);
+  private readonly _appSettingsService = inject(AppSettingsService);
   private readonly _formBuilder = inject(FormBuilder);
 
   constructor() {
@@ -49,35 +56,48 @@ export class SettingComponent implements OnInit {
 
   public ngOnInit(): void {
     this._initializeForm();
-    this._loadSettings();
+    this._loadSettingsForm();
   }
 
   public onLanguageChange(): void {
     this._translationService.setActiveLang(this.selectedLangId);
   }
 
-  public saveSettings(): void {
+  public async saveSettings(): Promise<void> {
     if (this.settingsForm.valid) {
-      const settings = this.settingsForm.value;
+      try {
+        const settings = this.settingsForm.value;
 
-      const formattedSettings = {
-        ...settings,
-        workTime: this._formatTime(settings.workTime),
-        breakTime: this._formatTime(settings.breakTime),
-      };
+        const formattedSettings: Partial<AppSettings> = {
+          ...settings,
+          language: this.selectedLangId,
+          workTime: this._formatTime(settings.workTime),
+          breakTime: this._formatTime(settings.breakTime),
+        };
 
-      localStorage.setItem('appSettings', JSON.stringify(formattedSettings));
-
-      // Show success message or notification
-      // You can implement a toast or notification service here
-      console.log('Settings saved successfully');
+        await this._appSettingsService.saveSettings(formattedSettings);
+      } catch (error) {
+        console.error('Error al guardar la configuración:', error);
+      }
     } else {
-      // Mark all fields as touched to show validation errors
+      // Marcar todos los campos como tocados para mostrar errores de validación
       Object.keys(this.settingsForm.controls).forEach(key => {
         const control = this.settingsForm.get(key);
         control?.markAsTouched();
       });
     }
+
+    this.close.emit();
+  }
+
+  public async resetSettings(): Promise<void> {
+    await this._appSettingsService.resetToDefaults();
+    this.selectedLangId = this._appSettingsService.settings().language;
+
+    this.onLanguageChange();
+    this._loadSettingsForm();
+
+    this.close.emit();
   }
 
   public getTimeErrorMessage(controlName: string): string {
@@ -110,36 +130,9 @@ export class SettingComponent implements OnInit {
   }
 
   private _initializeForm(): void {
-    // const timeValidator = (control: FormControl): ValidationErrors | null => {
-    //   const time = control.value;
-    //   if (!time) {
-    //     return null;
-    //   }
-
-    //   // Ensure the time is in HH:MM:SS format
-    //   if (!/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(time)) {
-    //     return { invalidFormat: true };
-    //   }
-
-    //   const [hours, minutes, seconds] = time.split(':').map(Number);
-
-    //   if (hours === 0 && minutes === 0 && seconds === 0) {
-    //     return { zeroTime: true };
-    //   }
-
-    //   return null;
-    // };
-
-    // // Format time to ensure HH:MM:SS format
-    // const formatTimeValue = (time: string): string => {
-    //   if (!time) return '00:00:00';
-    //   const [h = '00', m = '00', s = '00'] = time.split(':');
-    //   return `${h.padStart(2, '0')}:${m.padStart(2, '0')}:${s.padStart(2, '0')}`;
-    // };
-
     this.settingsForm = this._formBuilder.group({
       workTime: [
-        '00:20:00',
+        this._appSettingsService.settings()?.workTime,
         [
           Validators.required,
           Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/),
@@ -147,15 +140,15 @@ export class SettingComponent implements OnInit {
         ],
       ],
       breakTime: [
-        '00:05:00',
+        this._appSettingsService.settings()?.breakTime,
         [
           Validators.required,
           Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/),
           this._timeValidator,
         ],
       ],
-      notificationsEnabled: [true],
-      soundEnabled: [true],
+      notificationsEnabled: [this._appSettingsService.settings()?.notificationsEnabled],
+      soundEnabled: [this._appSettingsService.settings()?.soundEnabled, Validators.required],
     });
   }
 
@@ -193,21 +186,14 @@ export class SettingComponent implements OnInit {
     return null;
   }
 
-  private _loadSettings(): void {
-    const savedSettings = localStorage.getItem('appSettings');
+  private _loadSettingsForm(): void {
+    const settings: AppSettings = this._appSettingsService.settings();
 
-    if (savedSettings) {
-      try {
-        const settings = JSON.parse(savedSettings);
-        this.settingsForm.patchValue({
-          workTime: settings.workTime || '00:25:00',
-          breakTime: settings.breakTime || '00:05:00',
-          notificationsEnabled: settings.notificationsEnabled !== false,
-          soundEnabled: settings.soundEnabled !== false,
-        });
-      } catch (e) {
-        console.error('Error loading settings:', e);
-      }
-    }
+    this.settingsForm.patchValue({
+      workTime: settings.workTime,
+      breakTime: settings.breakTime,
+      notificationsEnabled: settings.notificationsEnabled,
+      soundEnabled: settings.soundEnabled,
+    });
   }
 }

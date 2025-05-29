@@ -50,9 +50,6 @@
   <div class="eb-home-status">
     <div class="eb-home-status-indicator"></div>
 
-    <!-- <label class="eb-home-status-text">
-      {{ 'home.messages.waiting' | transloco }}
-    </label> -->
     <label class="eb-home-status-text">
       {{ currentMessage() }}
     </label>
@@ -131,7 +128,11 @@
     <div class="eb-home-modal-overlay" @fadeScale>
       <div class="eb-home-modal-content">
         <div class="eb-home-modal">
-          <eb-setting lfClickOutside (clickOutside)="closeModal()"></eb-setting>
+          <eb-setting
+            lfClickOutside
+            (clickOutside)="closeModal()"
+            (close)="closeModal()"
+          ></eb-setting>
         </div>
       </div>
     </div>
