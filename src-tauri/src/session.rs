@@ -7,7 +7,6 @@ use tauri::{Emitter, Window};
 use tokio::time;
 use crate::enums::error::SessionError;
 
-/// Global flags for session control
 /// This flag is used to cancel an ongoing session
 pub static CANCEL_FLAG: AtomicBool = AtomicBool::new(false);
 
@@ -117,23 +116,23 @@ pub async fn start_session(window: Window, duration_str: String) -> Result<(), S
         let percentage:f64 = (elapsed_ms as f64 / total_time_ms as f64) * 100.0;
         let clamped_percentage:f64 = percentage.min(100.0);
 
-        // Only emit progress if percentage changed by at least 1% to reduce overhead
+        let time_left_str = format_remaining_time(remaining_ms);
+        
+        // Emit time progress on every tick for smooth countdown
+        let _ = window.emit("session-time-progress", time_left_str.clone());
+        
+        // Only emit progress percentage if it changed by at least 1% to reduce overhead
         if (clamped_percentage - last_emitted_percentage).abs() >= 1.0 {
-            let time_left_str = format_remaining_time(remaining_ms);
-            
-            // Emit progress updates
             let _ = window.emit("session-progress", clamped_percentage);
-            let _ = window.emit("session-time-progress", time_left_str.clone());
-
-            print!(
-                "\r🟢 Running... {:.0}% - ⏳ Time remaining: {}",
-                clamped_percentage, time_left_str
-            );            
-
-            let _ = io::stdout().flush();
 
             last_emitted_percentage = clamped_percentage;
         }
+
+        print!(
+            "\r🟢 Running... {:.0}% - ⏳ Time remaining: {}",
+            clamped_percentage, time_left_str
+        );            
+        let _ = io::stdout().flush();
 
         interval.tick().await;
     }

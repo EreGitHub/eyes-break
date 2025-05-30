@@ -8,17 +8,15 @@ use tokio::time as tokio_time;
 
 /// Tests for the parse_duration_string function
 #[test]
-fn test_parse_duration_string_valid() {
-    // Test valid time formats
-    assert_eq!(parse_duration_string("00:01:00").unwrap(), 60_000); // 1 minuto
-    assert_eq!(parse_duration_string("01:00:00").unwrap(), 3_600_000); // 1 hora
+fn test_parse_duration_string_valid() {    
+    assert_eq!(parse_duration_string("00:01:00").unwrap(), 60_000); // 1 min
+    assert_eq!(parse_duration_string("01:00:00").unwrap(), 3_600_000); // 1 h
     assert_eq!(parse_duration_string("01:30:45").unwrap(), 5_445_000); // 1h 30m 45s
 }
 
 /// Test invalid time formats
 #[test]
-fn test_parse_duration_string_invalid_format() {
-    // Test invalid formats
+fn test_parse_duration_string_invalid_format() {    
     assert!(matches!(
         parse_duration_string("invalid"),
         Err(SessionError::InvalidTimeFormat)
@@ -36,7 +34,6 @@ fn test_parse_duration_string_invalid_format() {
 /// Test invalid time values
 #[test]
 fn test_parse_duration_string_invalid_time() {
-    // Test invalid time values
     assert!(matches!(
         parse_duration_string("00:60:00"),
         Err(SessionError::TimeOutOfRange)
@@ -45,12 +42,13 @@ fn test_parse_duration_string_invalid_time() {
         parse_duration_string("00:00:60"),
         Err(SessionError::TimeOutOfRange)
     ));
+    
     // Test zero time
     assert!(matches!(
         parse_duration_string("00:00:00"),
         Err(SessionError::TimeOutOfRange)
     ));
-    // Test overflow (this doesn't actually fail because u64 can handle large values)
+    
     // The function handles overflow correctly with checked_mul and checked_add
     let result = parse_duration_string("1000000:00:00");
     assert!(result.is_ok(), "Overflow should be handled without errors");
@@ -68,8 +66,7 @@ fn test_format_remaining_time() {
 
 /// Test the cancellation flag
 #[test]
-fn test_cancel_flag() {
-    // Set up the flag
+fn test_cancel_flag() {    
     CANCEL_FLAG.store(false, Ordering::SeqCst);
     
     // Verify it can be set to true
@@ -97,8 +94,7 @@ fn test_cancel_session() {
 
 /// Test that the session respects the cancellation flag
 #[tokio::test]
-async fn test_session_respects_cancel_flag() {
-    // Reset the flag before test
+async fn test_session_respects_cancel_flag() {    
     CANCEL_FLAG.store(false, Ordering::SeqCst);
     
     // Simulate a long-running operation that checks the cancel flag
