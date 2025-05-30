@@ -12,9 +12,11 @@
   [![Rust](https://img.shields.io/badge/Rust-1.87.0-FFC131?logo=rust&logoColor=white)](https://www.rust-lang.org/)
   [![Cargo](https://img.shields.io/badge/Cargo-1.87.0-FFC131?logo=cargo&logoColor=white)](https://www.rust-lang.org/)
 
-  <p align="center">
-    <img src="./screenshot.png" alt="Menubar app with Tauri" width="500" />
-  </p>
+  <div align="center" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
+    <img src="./screenshots/screenshot1.png" alt="EyesBreak Main Interface" width="300" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+    <img src="./screenshots/screenshot2.png" alt="EyesBreak Break Reminder" width="300" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+    <img src="./screenshots/screenshot3.png" alt="EyesBreak Settings" width="300" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  </div>
 </div>
 
 ---
