@@ -3,7 +3,7 @@
   <img src="./public/icon.png" alt="Menubar app with Tauri" width="100" />
   <h1>EyesBreak</h1>
 
-  <h3>Tu compañero para el cuidado visual</h3>
+  <h3>Your Visual Health Companion</h3>
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![Angular](https://img.shields.io/badge/Angular-19.0.1-DD0031?logo=angular)](https://angular.io/)
@@ -19,106 +19,152 @@
 
 ---
 
-EyesBreak es una aplicación de escritorio diseñada para ayudar a los usuarios a mantener una rutina saludable de descanso visual. La aplicación te recuerda periódicamente que es hora de hacer una pausa para descansar la vista, ofreciendo ejercicios y recomendaciones para reducir la fatiga visual.
+EyesBreak is a desktop application designed to help users maintain healthy visual rest routines. The app periodically reminds you when it's time to take a break, offering guided eye exercises and recommendations to reduce eye strain.
 
-## 🚀 Características
+## 🚀 Features
 
-- Recordatorios programados para pausas visuales
-- Ejercicios guiados para descansar la vista
-- Personalización de intervalos de trabajo y descanso
-- Interfaz intuitiva y fácil de usar
-- Disponible para Windows, macOS y Linux
+- Scheduled reminders for visual breaks
+- Guided eye exercises
+- Customizable work and break intervals
+- Intuitive and user-friendly interface
+- Available for Windows, macOS, and Linux
 
-## 📦 Requisitos del Sistema
+## 📦 System Requirements
 
-- Node.js 19.0.1 o superior
+- Node.js 19.0.1 or higher
 - Angular CLI 19.0.1
-- Rust 1.87.0 o superior
+- Rust 1.87.0 or higher
 - Cargo 1.87.0
-- Tauri (se instalará automáticamente)
+- Tauri (will be installed automatically)
 
-## 🛠️ Instalación para Desarrolladores
+## 🛠️ Development Setup
 
-### 1. Clonar el repositorio
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/tuusuario/eyes-break.git
 cd eyes-break
 ```
 
-### 2. Instalar dependencias
+### 2. Install Dependencies
 
 ```bash
-# Instalar dependencias de Node.js
+# Install Node.js dependencies
 bun install
 
-# Instalar dependencias de Rust (si no las tienes)
+# Install Rust (if not already installed)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# Instalar dependencias del sistema para Tauri
-# Para macOS:
+# Install system dependencies for Tauri
+# For macOS:
 brew install create-dmg
-# Para Ubuntu/Debian:
+# For Ubuntu/Debian:
 # sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
 ```
 
-## 🚀 Iniciar la aplicación en modo desarrollo
+## 🚀 Start Development Server
 
 ```bash
-# Ejecutar el servidor de desarrollo de Angular
+# Run the Angular development server
 bun tauri dev
 ```
 
-## 🏗️ Construir para producción
+## 🏗️ Build for Production
 
 ```bash
-# Construir el ejecutable con Tauri
+# Build the executable with Tauri
 bun tauri build
 ```
 
-## 📚 Documentación para Desarrolladores
+## 🧹 Maintenance and Cleanup
 
-### Estructura del Proyecto
+To ensure optimal performance and free up disk space, we provide a cleanup script that removes build artifacts and cached dependencies. This is particularly useful when you need to:
+
+- Free up disk space (can save several hundred MB to a few GB)
+- Resolve dependency-related issues
+- Ensure a clean build environment
+- Prepare for a fresh installation
+
+### Running the Cleanup Script
+
+```bash
+# Make the script executable (only needed once)
+chmod +x cleanup.sh
+```
+
+```bash
+# Execute the cleanup script
+./cleanup.sh
+```
+
+This script will:
+1. Remove the `node_modules/` directory (saves ~200-500MB)
+2. Remove the `dist/` directory (saves ~50-200MB)
+3. Run `cargo clean` in the `src-tauri` directory (saves ~300MB-2GB)
+
+> **Note**: After running the cleanup, you'll need to reinstall dependencies with `bun install` before the next development session.
+
+### What Gets Cleaned
+
+| Directory/Command | What it Removes | Approx. Space Saved |
+|-------------------|----------------|---------------------|
+| `node_modules/`   | Node.js dependencies | 200-500MB |
+| `dist/`          | Build output files | 50-200MB |
+| `cargo clean`     | Rust build artifacts | 300MB-2GB |
+
+## 📚 Developer Documentation
+
+### Project Structure
 
 ```
 src/
-├── app/               # Módulos y componentes de Angular
-├── public/            # Recursos estáticos
-├── styles/            # Estilos globales
-└── tauri/             # Configuración de Tauri
+├── app/               # Angular modules and components
+├── public/            # Static assets
+├── styles/            # Global styles
+└── tauri/             # Tauri configuration
 ```
 
-### Convenciones de Código
+### Code Conventions
 
-- Usar TypeScript con tipado estricto
-- Seguir la guía de estilo de Angular
+- Use TypeScript with strict typing
+- Follow Angular style guide
 
-### Uso Básico
+### Basic Usage
 
-1. Al iniciar, la aplicación se minimizará en la bandeja del sistema (barra de tareas)
-2. La aplicación te notificará cuando sea hora de tomar un descanso
-3. Sigue los ejercicios en pantalla durante el tiempo de descanso
-4. La aplicación se reanudará automáticamente después del descanso
+1. On startup, the app will minimize to the system tray
+2. The app will notify you when it's time to take a break
+3. Follow the on-screen exercises during the break
+4. The app will automatically resume after the break
 
-### Personalización
+### Customization
 
-Puedes personalizar la aplicación desde el menú de configuración:
+You can customize the application from the settings menu:
 
-- Intervalo de trabajo (por defecto: 20 minutos)
-- Duración del descanso (por defecto: 20 segundos)
-- Activar/desactivar notificaciones
-- Iniciar con el sistema
+- Work interval (default: 20 minutes)
+- Break duration (default: 20 seconds)
+- Enable/disable notifications
+- Start with the system
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for more details.
 
-## 📞 Soporte
+## 📞 Support
 
-Si encuentras algún problema o tienes alguna pregunta, por favor [abre un issue](https://github.com/tuusuario/eyes-break/issues).
+If you encounter any issues or have questions, please [open an issue](https://github.com/tuusuario/eyes-break/issues).
 
-## 🌐 Enlaces Útiles
+## 🌐 Useful Links
 
-- [Documentación de Angular](https://angular.io/docs)
-- [Documentación de Tauri](https://tauri.app/)
-- [Guía de estilo de Angular](https://angular.io/guide/styleguide)
+- [Angular Documentation](https://angular.io/docs)
+- [Tauri Documentation](https://tauri.app/)
+- [Angular Style Guide](https://angular.io/guide/styleguide)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [contribution guide](CONTRIBUTING.md) to get started.
+
+## 🙏 Acknowledgments
+
+- [Tauri](https://tauri.app/) - For the desktop application framework
+- [Angular](https://angular.io/) - For the frontend framework
+- [Bun](https://bun.sh/) - For package management and script running
