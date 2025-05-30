@@ -12,6 +12,8 @@
     "tauri": "tauri",
     "tauri:dev": "bun tauri dev",
     "tauri:build": "bun tauri build",
+    "tauri:test": "cd src-tauri && cargo test --lib -- --test-threads=1",
+    "build:test": "bun run tauri:test && bun tauri:build",
     "tauri:bundle": "bun tauri bundle"
   },
   "private": true,
