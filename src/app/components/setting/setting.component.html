@@ -24,18 +24,19 @@
         <label for="workTime" class="form-label">{{ 'common.workTime' | transloco }}</label>
         <div class="time-input-container">
           <input
-            type="time"
+            type="text"
             id="workTime"
             formControlName="workTime"
-            step="1"
             class="time-input"
             [ngClass]="{
               'is-invalid':
                 settingsForm.get('workTime')?.invalid && settingsForm.get('workTime')?.touched,
             }"
-            pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+            placeholder="00:00:00"
+            maxlength="8"
+            (input)="formatTimeInput($event, 'workTime')"
+            (blur)="validateTimeInput($event, 'workTime')"
           />
-
           <span class="time-format">HH:MM:SS</span>
         </div>
 
@@ -48,16 +49,18 @@
         <label for="breakTime" class="form-label">{{ 'common.breakTime' | transloco }}</label>
         <div class="time-input-container">
           <input
-            type="time"
+            type="text"
             id="breakTime"
             formControlName="breakTime"
-            step="1"
             class="time-input"
             [ngClass]="{
               'is-invalid':
                 settingsForm.get('breakTime')?.invalid && settingsForm.get('breakTime')?.touched,
             }"
-            pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+            placeholder="00:00:00"
+            maxlength="8"
+            (input)="formatTimeInput($event, 'breakTime')"
+            (blur)="validateTimeInput($event, 'breakTime')"
           />
 
           <span class="time-format">HH:MM:SS</span>

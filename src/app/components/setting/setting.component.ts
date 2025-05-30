@@ -100,6 +100,89 @@ export class SettingComponent implements OnInit {
     this.close.emit();
   }
 
+  public formatTimeInput(event: Event, controlName: string): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/[^0-9:]/g, ''); // Remove any non-digit and non-colon characters
+
+    // Auto-insert colons as user types
+    if (value.length > 2 && value.indexOf(':') === -1) {
+      value = value.substring(0, 2) + ':' + value.substring(2);
+    }
+    if (value.length > 5 && value.lastIndexOf(':') === 2) {
+      value = value.substring(0, 5) + ':' + value.substring(5);
+    }
+
+    // Limit to HH:MM:SS format
+    if (value.length > 8) {
+      value = value.substring(0, 8);
+    }
+
+    input.value = value;
+
+    // Update the form control value
+    const control = this.settingsForm.get(controlName);
+    if (control) {
+      control.setValue(value);
+      control.updateValueAndValidity();
+    }
+  }
+
+  public validateTimeInput(event: Event, controlName: string): void {
+    const input = event.target as HTMLInputElement;
+    const control = this.settingsForm.get(controlName);
+
+    if (!control) return;
+
+    let value = input.value;
+
+    // If empty, set to default 00:00:00
+    if (!value) {
+      value = '00:00:00';
+      input.value = value;
+      control.setValue(value);
+      control.updateValueAndValidity();
+
+      return;
+    }
+
+    // Ensure we have all parts (HH:MM:SS)
+    const parts = value.split(':');
+    while (parts.length < 3) {
+      parts.push('00');
+    }
+
+    // Format each part to 2 digits
+    const hours = parts[0].padStart(2, '0');
+    const minutes = parts[1].padStart(2, '0');
+    const seconds = parts[2]?.padStart(2, '0') || '00';
+
+    // Validate time values
+    const hoursNum = parseInt(hours, 10);
+    const minutesNum = parseInt(minutes, 10);
+    const secondsNum = parseInt(seconds, 10);
+
+    if (
+      isNaN(hoursNum) ||
+      hoursNum < 0 ||
+      hoursNum > 23 ||
+      isNaN(minutesNum) ||
+      minutesNum < 0 ||
+      minutesNum > 59 ||
+      isNaN(secondsNum) ||
+      secondsNum < 0 ||
+      secondsNum > 59
+    ) {
+      control.setErrors({ invalidTime: true });
+      return;
+    }
+
+    // Set the formatted time
+    const formattedTime = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+    input.value = formattedTime;
+    control.setValue(formattedTime);
+    control.updateValueAndValidity();
+  }
+
   public getTimeErrorMessage(controlName: string): string {
     const control = this.settingsForm.get(controlName);
 
@@ -135,6 +218,8 @@ export class SettingComponent implements OnInit {
         this._appSettingsService.settings()?.workTime,
         [
           Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(8),
           Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/),
           this._timeValidator,
         ],
@@ -143,6 +228,8 @@ export class SettingComponent implements OnInit {
         this._appSettingsService.settings()?.breakTime,
         [
           Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(8),
           Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/),
           this._timeValidator,
         ],
