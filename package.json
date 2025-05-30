@@ -1,6 +1,6 @@
 {
   "name": "eyes-break",
-  "version": "0.0.0-RC10",
+  "version": "0.0.0-RC11",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
