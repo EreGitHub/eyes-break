@@ -77,14 +77,14 @@ export default class HomeComponent implements OnInit {
       [StateSessionEnum.BREAK]: 'home.messages.break',
     };
     this.stateSession = signal(StateSessionEnum.WAITING);
+    this._cancelAnimation$ = new Subject<void>();
     this.currentMessage = signal(this._EMPTY);
     this.animatedAfterStarted = signal(false);
+    this._cancelTimer$ = new Subject<void>();
     this.title = signal(this._START_TITLE);
     this.timerBreak = signal(this._EMPTY);
     this.timerWork = signal(this._EMPTY);
     this.isShowModal = signal(false);
-    this._cancelAnimation$ = new Subject<void>();
-    this._cancelTimer$ = new Subject<void>();
     this.progress = signal(0);
 
     effect(() => {
